@@ -1,9 +1,17 @@
 <script lang="ts">
+	import Button from "$lib/components/ui/button/button.svelte";
     import { Input } from "$lib/components/ui/input/index.js";
-	import { LoaderCircle } from "lucide-svelte";
+	import { LoaderCircle, X } from "lucide-svelte";
 
     //#region file input
+    let file: File | undefined = $state(undefined);
     let files: FileList | undefined = $state(undefined);
+
+    function clearFileInput(): void {
+        file = undefined;
+        files = undefined;
+    }
+
     //#endregion file input
 
     $effect(() => {
@@ -29,7 +37,9 @@
     <span class="w-fit">Tiles file upload:</span>
 
     <!-- input -->
-    <Input class="cursor-pointer w-fit" type="file" bind:files/>
+    <Input class="cursor-pointer w-fit" type="file" bind:files bind:value={file}/>
+
+    <Button onclick={clearFileInput}><X/></Button>
 </div>
 
 {#if files != undefined}
