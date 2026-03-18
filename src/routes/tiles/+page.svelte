@@ -76,8 +76,16 @@
         return rows;
     });
 
-    let paletteColourHovered: Colour | null = $state(null);
     let paletteColourSelected: Colour | null = $state(null);
+
+    let filterBy: Colour | undefined = $derived.by(() => {
+        if(paletteColourSelected != null) {
+            return paletteColourSelected;
+        } else {
+            return undefined;
+        }
+    });
+
     //#endregion image loaded
 </script>
 
@@ -103,7 +111,7 @@
                     </Card.Header>
 
                     <Card.Content>
-                        <ColourGrid rows={pixels!} width={3}/>
+                        <ColourGrid rows={pixels!} width={3} {filterBy}/>
                     </Card.Content>
 
                     <Card.Footer>
@@ -121,7 +129,6 @@
                         <ColourGrid
                             rows={palette_display!}
                             width={20}
-                            bind:hoveredColour={paletteColourHovered}
                             bind:selectedColour={paletteColourSelected}
                         />
                     </Card.Content>

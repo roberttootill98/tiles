@@ -5,33 +5,43 @@
         colour,
         width = 10,
         onSelect,
-        onHoverChanged
+        filterBy
     }: {
-        colour: Colour,
-        width?: number,
-        onSelect: (colour: Colour) => void,
-        onHoverChanged: (colour: Colour | null) => void
+        colour: Colour;
+        width?: number;
+        onSelect: (colour: Colour) => void;
+        filterBy?: Colour;
     } = $props();
 
     function onclick(): void {
         onSelect(colour);
     }
 
-    function onmouseover(): void {
-        onHoverChanged(colour);
-    }
+    const match: boolean = $derived.by(() => {
+        if(filterBy == undefined) return true;
 
-    function onmouseout(): void {
-        onHoverChanged(null);
-    }
+        return (
+            colour.red == filterBy.red &&
+            colour.green == filterBy.green &&
+            colour.blue == filterBy.blue
+        );
+    });
+
+    const opacity: number = $derived.by(() => {
+        if(match) {
+            return 1;
+        } else {
+            return 0.5;
+        }
+    });
 </script>
 
 <button title={`(${colour.red}, ${colour.green}, ${colour.blue})`}
-    {onclick} {onmouseover} {onmouseout} onfocus={() => {}} onblur={() => {}}
+    {onclick} onfocus={() => {}} onblur={() => {}}
     class="cursor-pointer"
     style="
         width: {width}px; height: {width}px;
-        background:rgb({colour.red}, {colour.green}, {colour.blue});
+        background: rgba({colour.red}, {colour.green}, {colour.blue}, {opacity});
     "
 >
 </button>

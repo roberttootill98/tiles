@@ -6,20 +6,25 @@
         rows,
         width = 10,
         selectedColour = $bindable(null),
-        hoveredColour = $bindable(null)
+        filterBy
     }: { 
-        rows: Colour[][],
-        width?: number,
-        selectedColour?: Colour | null
-        hoveredColour?: Colour | null
+        rows: Colour[][];
+        width?: number;
+        selectedColour?: Colour | null;
+        filterBy?: Colour;
     } = $props();
 
-    function onHoverChanged(colour: Colour | null): void {
-        hoveredColour = colour;
-    }
-
     function onSelect(colour: Colour): void {
-        selectedColour = colour;
+        if(
+            selectedColour != null &&
+            selectedColour.red == colour.red &&
+            selectedColour.green == colour.green &&
+            selectedColour.blue == colour.blue
+        ) {
+            selectedColour = null;
+        } else {
+            selectedColour = colour;
+        }
     }
 </script>
 
@@ -31,7 +36,7 @@
                     colour={colour}
                     width={width}
                     {onSelect}
-                    {onHoverChanged}
+                    {filterBy}
                 />
             {/each}
         </div>
