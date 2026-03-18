@@ -4,7 +4,6 @@
 	import ImageManager, { type Colour } from "$lib/image/ImageManager";
 	import { LoaderCircle, X } from "lucide-svelte";
     import * as Card from "$lib/components/ui/card/index.js";
-	import ColourDisplay from "$lib/image/ColourDisplay.svelte";
 	import ColourGrid from "$lib/image/ColourGrid.svelte";
 
     //#region file input
@@ -52,6 +51,30 @@
     let imageLoaded: boolean = $state(false);
     let pixels: Colour[][] | null = $state(null);
     let palette: Colour[] | null = $state(null);
+
+    let palette_display: Colour[][] | null = $derived.by(() => {
+        if(palette == null) return null;
+
+        const rowWidth: number = 8;
+
+        const rows: Colour[][] = [];
+        let row: Colour[] = [];
+
+        for(const [i, colour] of palette.entries()) {
+            if(row.length < rowWidth) {
+                row.push(colour);
+
+                if(i == palette.length - 1) {
+                    rows.push(row);
+                }
+            } else {
+                rows.push(row);
+                row = [colour];
+            }
+        }
+
+        return rows;
+    });
     //#endregion image loaded
 </script>
 
@@ -77,7 +100,7 @@
                     </Card.Header>
 
                     <Card.Content>
-                        <ColourGrid rows={pixels!}/>
+                        <ColourGrid rows={pixels!} width={3}/>
                     </Card.Content>
 
                     <Card.Footer>
@@ -92,9 +115,7 @@
                     </Card.Header>
 
                     <Card.Content>
-                        {#each palette as colour (colour)}
-                            <ColourDisplay colour={colour}/>
-                        {/each}
+                        <ColourGrid rows={palette_display!} width={20}/>
                     </Card.Content>
 
                     <Card.Footer>
