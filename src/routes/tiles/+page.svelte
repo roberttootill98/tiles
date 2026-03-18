@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Button from "$lib/components/ui/button/button.svelte";
     import { Input } from "$lib/components/ui/input/index.js";
+	import ImageManager from "$lib/image/ImageManager";
 	import { LoaderCircle, X } from "lucide-svelte";
 
     //#region file input
@@ -15,7 +16,7 @@
     //#endregion file input
 
     $effect(() => {
-        if(files != undefined) {
+        if(file != undefined) {
             loadImage();
         }
     });
@@ -23,6 +24,11 @@
     async function loadImage(): Promise<void> {
         try {
             imageLoading = true;
+
+            if(files == undefined) return;
+            if(files[0] == undefined) return;
+
+            ImageManager.loadImage(files[0]);
         } finally {
             imageLoading = false;
         }
