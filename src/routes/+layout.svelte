@@ -9,12 +9,12 @@
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
 
-<div class="h-screen w-screen flex flex-col bg-background text-white">
+<div class="h-screen w-screen flex gap-4 flex-col bg-background text-white">
 	<header class="flex justify-end w-screen p-2">
 		<ToggleTheme/>
 	</header>
 
-	<main class="flex flex-col h-full justify-center items-center">
+	<main class="flex flex-col h-full items-center">
 		{@render children()}
 	</main>
 </div>

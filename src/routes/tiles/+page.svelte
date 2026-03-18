@@ -12,5 +12,9 @@
     <span class="w-fit">Tiles file upload:</span>
 
     <!-- input -->
-    <Input class="w-fit" type="file" bind:files/>
+    <Input class="cursor-pointer w-fit" type="file" bind:files/>
 </div>
+
+{#if files != undefined}
+    <span>Files!</span>
+{/if}
