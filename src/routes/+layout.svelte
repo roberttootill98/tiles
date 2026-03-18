@@ -14,7 +14,7 @@
 		<ToggleTheme/>
 	</header>
 
-	<main class="flex flex-col justify-center items-center">
+	<main class="flex flex-col h-full justify-center items-center">
 		{@render children()}
 	</main>
 </div>
