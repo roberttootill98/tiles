@@ -75,6 +75,9 @@
 
         return rows;
     });
+
+    let paletteColourHovered: Colour | null = $state(null);
+    let paletteColourSelected: Colour | null = $state(null);
     //#endregion image loaded
 </script>
 
@@ -115,7 +118,12 @@
                     </Card.Header>
 
                     <Card.Content>
-                        <ColourGrid rows={palette_display!} width={20}/>
+                        <ColourGrid
+                            rows={palette_display!}
+                            width={20}
+                            bind:hoveredColour={paletteColourHovered}
+                            bind:selectedColour={paletteColourSelected}
+                        />
                     </Card.Content>
 
                     <Card.Footer>
@@ -123,7 +131,7 @@
                     </Card.Footer>
                 </Card.Root>
             </div>
-        {:else}
+        {:else if imageLoading}
             <LoaderCircle class="animate-spin"/>
         {/if}
     {/if}
