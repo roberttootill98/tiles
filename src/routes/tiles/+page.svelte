@@ -4,6 +4,8 @@
 	import ImageManager, { type Colour } from "$lib/image/ImageManager";
 	import { LoaderCircle, X } from "lucide-svelte";
     import * as Card from "$lib/components/ui/card/index.js";
+	import ColourDisplay from "$lib/image/ColourDisplay.svelte";
+	import ColourGrid from "$lib/image/ColourGrid.svelte";
 
     //#region file input
     let file: File | undefined = $state(undefined);
@@ -69,13 +71,13 @@
         {#if !imageLoading && imageLoaded}
             <div class="flex gap-2">
                 <!-- load interactive image -->
-                <Card.Root>
+                <Card.Root class="gap-2">
                     <Card.Header>
-                        <span>Image</span>
+                        <span class="font-bold">Image</span>
                     </Card.Header>
 
                     <Card.Content>
-                        <span>Content...</span>
+                        <ColourGrid rows={pixels!}/>
                     </Card.Content>
 
                     <Card.Footer>
@@ -84,13 +86,15 @@
                 </Card.Root>
     
                 <!-- palette -->
-                <Card.Root>
+                <Card.Root class="gap-2">
                     <Card.Header>
-                        <span>Palette</span>
+                        <span class="font-bold">Palette</span>
                     </Card.Header>
 
                     <Card.Content>
-                        <span>Content...</span>
+                        {#each palette as colour (colour)}
+                            <ColourDisplay colour={colour}/>
+                        {/each}
                     </Card.Content>
 
                     <Card.Footer>
