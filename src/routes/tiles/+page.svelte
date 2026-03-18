@@ -5,6 +5,7 @@
 	import { LoaderCircle, X } from "lucide-svelte";
     import * as Card from "$lib/components/ui/card/index.js";
 	import ColourGrid from "$lib/image/ColourGrid.svelte";
+	import Canvas from "$lib/image/Canvas.svelte";
 
     //#region file input
     let file: File | undefined = $state(undefined);
@@ -111,7 +112,7 @@
                     </Card.Header>
 
                     <Card.Content>
-                        <ColourGrid rows={pixels!} width={3} {filterBy}/>
+                        <Canvas pixels={pixels!} {filterBy} muteFactor={0.1}/>
                     </Card.Content>
 
                     <Card.Footer>

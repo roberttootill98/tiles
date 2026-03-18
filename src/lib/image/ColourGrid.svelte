@@ -4,14 +4,12 @@
 
     let {
         rows,
-        width = 10,
+        width,
         selectedColour = $bindable(null),
-        filterBy
     }: { 
         rows: Colour[][];
-        width?: number;
+        width: number;
         selectedColour?: Colour | null;
-        filterBy?: Colour;
     } = $props();
 
     function onSelect(colour: Colour): void {
@@ -34,9 +32,8 @@
             {#each column as colour (colour)}
                 <ColourDisplay
                     colour={colour}
-                    width={width}
+                    {width}
                     {onSelect}
-                    {filterBy}
                     {selectedColour}
                 />
             {/each}
