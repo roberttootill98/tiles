@@ -5,11 +5,13 @@
         colour,
         width = 10,
         onSelect,
+        selectedColour = $bindable(null),
         filterBy
     }: {
         colour: Colour;
         width?: number;
         onSelect: (colour: Colour) => void;
+        selectedColour?: Colour | null;
         filterBy?: Colour;
     } = $props();
 
@@ -34,6 +36,27 @@
             return 0.5;
         }
     });
+
+    const borderColour: string = $derived.by(() => {
+        if(
+            selectedColour != null &&
+            selectedColour.red == colour.red &&
+            selectedColour.green == colour.green &&
+            selectedColour.blue == colour.blue
+        ) {
+            return 'black';
+        } else {
+            return `rgba(${colour.red}, ${colour.green}, ${colour.blue}, ${opacity})`;
+        }
+    });
+
+    const border: string = $derived.by(() => {
+        if(selectedColour) {
+            return `border: 2px solid ${borderColour}`;
+        } else {
+            return '';
+        }
+    });
 </script>
 
 <button title={`(${colour.red}, ${colour.green}, ${colour.blue})`}
@@ -42,6 +65,7 @@
     style="
         width: {width}px; height: {width}px;
         background: rgba({colour.red}, {colour.green}, {colour.blue}, {opacity});
+        {border};
     "
 >
 </button>

@@ -128,7 +128,7 @@
                     <Card.Content>
                         <ColourGrid
                             rows={palette_display!}
-                            width={20}
+                            width={18}
                             bind:selectedColour={paletteColourSelected}
                         />
                     </Card.Content>

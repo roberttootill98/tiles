@@ -37,6 +37,7 @@
                     width={width}
                     {onSelect}
                     {filterBy}
+                    {selectedColour}
                 />
             {/each}
         </div>
