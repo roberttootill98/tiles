@@ -1,5 +1,5 @@
 
-type Colour = {
+export type Colour = {
     red: number;
     green: number;
     blue: number;
@@ -11,9 +11,8 @@ type ImageLoadData = {
 };
 
 class ImageManager {
-    public async loadImage(file: File): Promise<void> {
-        const { pixels, palette } = await this.imageTo2DArray(file);
-        console.log(`${palette.length} colours found!`);
+    public async loadImage(file: File): Promise<ImageLoadData> {
+        return await this.imageTo2DArray(file);
     }
 
     //#region load image
