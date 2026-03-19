@@ -1,16 +1,13 @@
 <script lang="ts">
 	import type { Colour } from "./ImageManager";
+    import * as Card from "$lib/components/ui/card/index.js";
 
     let {
         pixels,
-        pixelWidth = 4,
-        filterBy,
-        muteFactor
+        filterBy
     }: {
         pixels: Colour[][];
-        pixelWidth?: number;
         filterBy?: Colour;
-        muteFactor: number;
     } = $props();
 
     let canvas: HTMLCanvasElement;
@@ -68,6 +65,21 @@
         const imageData = new ImageData(pixels_render, width, height);
         canvas.getContext('2d')!.putImageData(imageData, 0, 0);
     }
+
+    let pixelWidth: number = $state(4);
+    let muteFactor: number = $state(0.1);
 </script>
 
-<canvas bind:this={canvas} {height} {width}></canvas>
+<Card.Root class="gap-2">
+    <Card.Header>
+        <span class="font-bold">Image</span>
+    </Card.Header>
+
+    <Card.Content>
+        <canvas bind:this={canvas} {height} {width} style="image-rendering: pixelated;"></canvas>
+    </Card.Content>
+
+    <Card.Footer>
+        <span>Dimensions: {pixels!.length} x {pixels![0].length}</span>
+    </Card.Footer>
+</Card.Root>

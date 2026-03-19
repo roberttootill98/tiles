@@ -3,8 +3,7 @@
     import { Input } from "$lib/components/ui/input/index.js";
 	import ImageManager, { type Colour } from "$lib/image/ImageManager";
 	import { LoaderCircle, X } from "lucide-svelte";
-    import * as Card from "$lib/components/ui/card/index.js";
-	import ColourGrid from "$lib/image/ColourGrid.svelte";
+	import Palette from "$lib/image/Palette.svelte";
 	import Canvas from "$lib/image/Canvas.svelte";
 
     //#region file input
@@ -53,40 +52,7 @@
     let pixels: Colour[][] | null = $state(null);
     let palette: Colour[] | null = $state(null);
 
-    let palette_display: Colour[][] | null = $derived.by(() => {
-        if(palette == null) return null;
-
-        const rowWidth: number = 8;
-
-        const rows: Colour[][] = [];
-        let row: Colour[] = [];
-
-        for(const [i, colour] of palette.entries()) {
-            if(row.length < rowWidth) {
-                row.push(colour);
-
-                if(i == palette.length - 1) {
-                    rows.push(row);
-                }
-            } else {
-                rows.push(row);
-                row = [colour];
-            }
-        }
-
-        return rows;
-    });
-
-    let paletteColourSelected: Colour | null = $state(null);
-
-    let filterBy: Colour | undefined = $derived.by(() => {
-        if(paletteColourSelected != null) {
-            return paletteColourSelected;
-        } else {
-            return undefined;
-        }
-    });
-
+    let paletteColourSelected: Colour | undefined = $state(undefined);
     //#endregion image loaded
 </script>
 
@@ -106,38 +72,14 @@
         {#if !imageLoading && imageLoaded}
             <div class="flex gap-2">
                 <!-- load interactive image -->
-                <Card.Root class="gap-2">
-                    <Card.Header>
-                        <span class="font-bold">Image</span>
-                    </Card.Header>
-
-                    <Card.Content>
-                        <Canvas pixels={pixels!} {filterBy} muteFactor={0.1}/>
-                    </Card.Content>
-
-                    <Card.Footer>
-                        <span>Dimensions: {pixels!.length} x {pixels![0].length}</span>
-                    </Card.Footer>
-                </Card.Root>
+                <Canvas pixels={pixels!} filterBy={paletteColourSelected}/>
     
                 <!-- palette -->
-                <Card.Root class="gap-2">
-                    <Card.Header>
-                        <span class="font-bold">Palette</span>
-                    </Card.Header>
-
-                    <Card.Content>
-                        <ColourGrid
-                            rows={palette_display!}
-                            width={18}
-                            bind:selectedColour={paletteColourSelected}
-                        />
-                    </Card.Content>
-
-                    <Card.Footer>
-                        <span>Palette length: {palette!.length}</span>
-                    </Card.Footer>
-                </Card.Root>
+                <Palette
+                    palette={palette!}
+                    width={18}
+                    bind:selectedColour={paletteColourSelected}
+                />
             </div>
         {:else if imageLoading}
             <LoaderCircle class="animate-spin"/>

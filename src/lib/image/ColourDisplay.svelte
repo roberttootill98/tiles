@@ -5,12 +5,12 @@
         colour,
         width,
         onSelect,
-        selectedColour = $bindable(null),
+        selectedColour = $bindable(undefined),
     }: {
         colour: Colour;
         width: number;
         onSelect: (colour: Colour) => void;
-        selectedColour?: Colour | null;
+        selectedColour?: Colour;
     } = $props();
 
     function onclick(): void {
