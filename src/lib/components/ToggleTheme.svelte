@@ -2,10 +2,11 @@
 	import { Moon, Sun } from "lucide-svelte";
 	import Button from "./ui/button/button.svelte";
 
-    let dark: boolean = $state(false);
+    let dark: boolean = $state(true);
 
     function toggleDark(): void {
         dark = !dark;
+
         if (dark) {
             document.documentElement.classList.add('dark');
             localStorage.setItem('theme', 'dark');
@@ -17,9 +18,9 @@
 </script>
 
 <Button onclick={toggleDark}>
-  {#if dark}
-    <Sun/>
-  {:else}
-    <Moon/>
-  {/if}
+    {#if dark}
+        <Sun/>
+    {:else}
+        <Moon/>
+    {/if}
 </Button>
