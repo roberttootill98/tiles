@@ -1,7 +1,12 @@
 <script lang="ts">
 	import { Moon, Sun } from "lucide-svelte";
 	import Button from "./ui/button/button.svelte";
+	import { onMount } from "svelte";
 
+    onMount(() => {
+        document.documentElement.classList.add('dark');
+    });
+    
     let dark: boolean = $state(true);
 
     function toggleDark(): void {
