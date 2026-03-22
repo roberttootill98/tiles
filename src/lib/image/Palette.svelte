@@ -2,6 +2,9 @@
 	import ColourDisplay from "./ColourDisplay.svelte";
 	import type { Colour } from "./ImageManager";
     import * as Card from "$lib/components/ui/card/index.js";
+	import Button from "$lib/components/ui/button/button.svelte";
+	import { SquareSlash } from "lucide-svelte";
+    import * as Tooltip from "$lib/components/ui/tooltip/index.js";
 
     let {
         palette,
@@ -49,6 +52,10 @@
             selectedColour = colour;
         }
     }
+
+    function splitPalette(): void {
+
+    }
 </script>
 
 <Card.Root class="gap-2">
@@ -74,5 +81,23 @@
     </Card.Content>
 
     <Card.Footer>
+        <!-- #region tools -->
+        
+        <!-- split palette button -->
+        <Tooltip.Provider>
+            <Tooltip.Root>
+                <Tooltip.Trigger>
+                    <Button size="icon" variant="outline" onclick={splitPalette}>
+                        <SquareSlash/>
+                    </Button>
+                </Tooltip.Trigger>
+
+                <Tooltip.Content>
+                    <p>Split Palette</p>
+                </Tooltip.Content>
+            </Tooltip.Root>
+        </Tooltip.Provider>
+
+        <!-- #endregion tools -->
     </Card.Footer>
 </Card.Root>
