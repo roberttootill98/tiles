@@ -56,24 +56,23 @@
         <span class="font-bold">Palette</span>
     </Card.Header>
 
-    <Card.Content>
-        <div class="flex flex-col">
-            {#each palette_display as column (column)}
-                <div class="flex">
-                    {#each column as colour (colour)}
-                        <ColourDisplay
-                            colour={colour}
-                            {width}
-                            {onSelect}
-                            {selectedColour}
-                        />
-                    {/each}
-                </div>
-            {/each}
-        </div>
+    <Card.Content class="flex flex-col">
+        {#each palette_display as column (column)}
+            <div class="flex">
+                {#each column as colour (colour)}
+                    <ColourDisplay
+                        colour={colour}
+                        {width}
+                        {onSelect}
+                        {selectedColour}
+                    />
+                {/each}
+            </div>
+        {/each}
+
+        <span>Palette length: {palette!.length}</span>
     </Card.Content>
 
     <Card.Footer>
-        <span>Palette length: {palette!.length}</span>
     </Card.Footer>
 </Card.Root>
