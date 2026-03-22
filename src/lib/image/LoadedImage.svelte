@@ -20,11 +20,11 @@
 </script>
 
 <div class="flex gap-2">
-	<!-- load interactive image -->
-	<Canvas pixels={pixels!} filterBy={paletteColourSelected} />
-
-	<!-- palette -->
 	{#if loadedImageType == 'originalImage'}
+		<!-- interactive image -->
+		<Canvas pixels={pixels!} filterBy={paletteColourSelected} />
+
+		<!-- palette -->
 		<Palette
 			{loadedImageType}
 			palette={palette!}
@@ -33,6 +33,10 @@
 			bind:splitPalettes
 		/>
 	{:else}
+		<!-- interactive image -->
+		<Canvas pixels={pixels!} filterBy={paletteColourSelected} {palette} />
+
+		<!-- palette -->
 		<Palette
 			{loadedImageType}
 			palette={palette!}

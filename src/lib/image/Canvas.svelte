@@ -28,7 +28,7 @@
 				const colourInPalette: boolean =
 					palette.find((colour_search: Colour) => {
 						return compareColours(colour, colour_search);
-					}) == null;
+					}) != null;
 
 				if (colourInPalette) {
 					// keep colour
