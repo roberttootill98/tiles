@@ -1,9 +1,4 @@
-
-export type Colour = {
-    red: number;
-    green: number;
-    blue: number;
-};
+import type { Colour } from "$lib/colour";
 
 type ImageLoadData = {
     pixels: Colour[][];

@@ -1,15 +1,15 @@
 <script lang="ts">
 	import ColourDisplay from './ColourDisplay.svelte';
-	import type { Colour } from './ImageManager';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { PaintBucket, SquareSlash } from 'lucide-svelte';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import { Toggle } from '$lib/components/ui/toggle/index.js';
 	import type { ComponentType } from 'svelte';
+	import { compareColours, type Colour } from '$lib/colour';
 
 	let {
-		palette,
+		palette = $bindable(),
 		width,
 		selectedColour = $bindable(undefined)
 	}: {
@@ -43,12 +43,13 @@
 	});
 
 	function onSelect(colour: Colour): void {
-		if (
-			selectedColour != null &&
-			selectedColour.red == colour.red &&
-			selectedColour.green == colour.green &&
-			selectedColour.blue == colour.blue
-		) {
+		if (tool_selectBackgroundColour.toggle_bind) {
+			// we're in select palette mode, ignore default behaviour
+			onclick_selectBackgroundColour(colour);
+			return;
+		}
+
+		if (selectedColour != null && compareColours(selectedColour, colour)) {
 			selectedColour = undefined;
 		} else {
 			selectedColour = colour;
@@ -56,21 +57,19 @@
 	}
 
 	//#region tools
-	const schema_tools: {
+	type ToolSchema = {
 		type: 'button' | 'toggle';
 		icon: ComponentType;
 		tooltip: string;
 		onclick: () => void;
-	}[] = $derived.by(() => {
+		//#region toggle
+		toggle_bind?: boolean;
+		//#endregion toggle
+	};
+
+	const schema_tools: ToolSchema[] = $derived.by(() => {
 		return [
-			{
-				type: 'toggle',
-				icon: SquareSlash,
-				tooltip: 'Select background colour (first in palette)',
-				onclick: (): void => {
-					selectingBackgroundColour = !selectingBackgroundColour;
-				}
-			},
+			tool_selectBackgroundColour,
 			{
 				type: 'button',
 				icon: PaintBucket,
@@ -80,7 +79,42 @@
 		];
 	});
 
-	let selectingBackgroundColour: boolean = $state(false);
+	//#region select background colour
+
+	const tool_selectBackgroundColour: ToolSchema = $state({
+		type: 'toggle',
+		icon: SquareSlash,
+		tooltip: 'Select background colour (first in palette)',
+		onclick: (): void => {
+			tool_selectBackgroundColour.toggle_bind = !tool_selectBackgroundColour.toggle_bind;
+		},
+		toggle_bind: false
+	});
+
+	function onclick_selectBackgroundColour(colour_selected: Colour): void {
+		//#region get index of new palette colour
+		let index: number;
+
+		for (const [i, colour] of palette.entries()) {
+			if (compareColours(colour_selected, colour)) {
+				index = i;
+				break;
+			}
+		}
+
+		//#endregion get index of new palette colour
+
+		const previousBackgroundColour: Colour = palette[0];
+
+		// set palette
+		palette[0] = colour_selected;
+		palette[index!] = previousBackgroundColour;
+
+		// untoggle button
+		tool_selectBackgroundColour.toggle_bind = false;
+	}
+
+	//#endregion select background colour
 
 	//#endregion tools
 </script>
@@ -110,20 +144,22 @@
 					<Tooltip.Trigger>
 						{#if schema_tool.type == 'button'}
 							<Button
+								onclick={schema_tool.onclick}
 								size="sm"
 								variant="outline"
-								onclick={schema_tool.onclick}
 								class="bg-transparent! px-2! hover:bg-muted!"
 							>
 								<schema_tool.icon />
 							</Button>
 						{:else if schema_tool.type == 'toggle'}
 							<Toggle
+								onclick={schema_tool.onclick}
 								variant="outline"
 								class="
                                     cursor-pointer
-                                    data-[state=on]:bg-green-600
-                                    dark:data-[state=on]:bg-green-800
+                                    {schema_tool.toggle_bind
+									? 'bg-green-600 dark:bg-green-800'
+									: ''}
                                 "
 							>
 								<schema_tool.icon />
