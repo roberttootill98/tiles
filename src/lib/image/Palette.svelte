@@ -87,7 +87,10 @@
 
 					// take palettes in order and just split
 					for (let i = 0; i < palettesRequired; i++) {
-						splitPalettes.push(palette.slice(i * paletteSize + 1, (i + 1) * paletteSize - 1));
+						splitPalettes.push([
+							palette[0],
+							...palette.slice(i * paletteSize + 1, (i + 1) * paletteSize - 1)
+						]);
 					}
 
 					//#endregion get new palettes
