@@ -2,13 +2,14 @@
 	import ColourDisplay from './ColourDisplay.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import { PaintBucket, SquareSlash } from 'lucide-svelte';
+	import { Download, PaintBucket, SquareSlash } from 'lucide-svelte';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import { Toggle } from '$lib/components/ui/toggle/index.js';
 	import type { ComponentType } from 'svelte';
 	import { compareColours, type Colour } from '$lib/colour';
 	import { paletteSize } from '$lib/palette';
 	import type { LoadedImageType } from './loadedImage';
+	import { downloadBlob } from '$lib/utils';
 
 	let {
 		loadedImageType,
@@ -74,7 +75,31 @@
 	};
 
 	const schema_tools: ToolSchema[] = $derived.by(() => {
-		const items: ToolSchema[] = [];
+		const items: ToolSchema[] = [
+			{
+				type: 'button',
+				icon: Download,
+				tooltip: 'Download as .pal file',
+				onclick: () => {
+					const content: string[] = [
+						// palette type declaration
+						'JASC-PAL',
+						'0100',
+						String(palette.length)
+					];
+
+					for (const colour of palette) {
+						content.push(`${colour.green} ${colour.red} ${colour.blue}`);
+					}
+
+					// ends in new line
+					content.push('');
+
+					// download as blob
+					downloadBlob(new Blob([content.join('\n')], { type: 'text/plain' }));
+				}
+			}
+		];
 
 		if (loadedImageType) {
 			items.push(tool_selectBackgroundColour);

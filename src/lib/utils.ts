@@ -11,3 +11,18 @@ export type WithoutChild<T> = T extends { child?: any } ? Omit<T, "child"> : T;
 export type WithoutChildren<T> = T extends { children?: any } ? Omit<T, "children"> : T;
 export type WithoutChildrenOrChild<T> = WithoutChildren<WithoutChild<T>>;
 export type WithElementRef<T, U extends HTMLElement = HTMLElement> = T & { ref?: U | null };
+
+export function downloadBlob(blob: Blob): void {
+	const link = document.createElement('a');
+
+	link.href = URL.createObjectURL(blob);
+
+	// set file name
+	link.download = 'palette.pal';
+
+	// trigger download
+	link.click();
+
+	// delete node
+	link.remove();
+}
