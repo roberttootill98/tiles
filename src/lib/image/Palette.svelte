@@ -10,6 +10,7 @@
 	import { paletteSize } from '$lib/palette';
 	import type { LoadedImageType } from './loadedImage';
 	import { downloadBlob } from '$lib/utils';
+	import EmptyPaletteSlot from './EmptyPaletteSlot.svelte';
 
 	let {
 		loadedImageType,
@@ -25,10 +26,11 @@
 		splitPalettes?: Colour[][];
 	} = $props();
 
+	// number of palette colours to show on each row
+	const rowWidth: number = 8;
+
 	let palette_display: Colour[][] | null = $derived.by(() => {
 		if (palette == null) return null;
-
-		const rowWidth: number = 8;
 
 		const rows: Colour[][] = [];
 		let row: Colour[] = [];
@@ -38,6 +40,7 @@
 				row.push(colour);
 
 				if (i == palette.length - 1) {
+					// fill out to end of row
 					rows.push(row);
 				}
 			} else {
@@ -177,10 +180,26 @@
 	</Card.Header>
 
 	<Card.Content class="flex flex-col">
-		{#each palette_display as column (column)}
+		{#each palette_display as column, i (column)}
 			<div class="flex">
 				{#each column as colour (colour)}
 					<ColourDisplay {colour} {width} {onSelect} {selectedColour} />
+				{/each}
+
+				<!-- free slots to make up rest of row or palette width -->
+				{#if i == palette_display!.length - 1 && palette_display![i].length != rowWidth}
+					<!-- only render number required to get row complete -->
+					{#each { length: rowWidth - (palette.length % paletteSize) }}
+						<EmptyPaletteSlot {width} />
+					{/each}
+				{/if}
+			</div>
+		{/each}
+
+		{#each { length: Math.floor((paletteSize - palette.length) / rowWidth) }}
+			<div class="flex">
+				{#each { length: rowWidth }}
+					<EmptyPaletteSlot {width} />
 				{/each}
 			</div>
 		{/each}
