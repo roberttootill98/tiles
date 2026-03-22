@@ -72,13 +72,7 @@
 	{#if files != undefined}
 		{#if !imageLoading && imageLoaded}
 			{#if splitPalettes.length > 0}
-				<Tabs.Root
-					value="original"
-					class="mx-2"
-					onValueChange={(v: string) => {
-						console.log(v);
-					}}
-				>
+				<Tabs.Root value="original" class="mx-2">
 					<Tabs.List>
 						<Tabs.Trigger value="original" class="cursor-pointer">Original</Tabs.Trigger>
 
