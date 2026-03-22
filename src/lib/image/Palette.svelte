@@ -8,17 +8,20 @@
 	import type { ComponentType } from 'svelte';
 	import { compareColours, type Colour } from '$lib/colour';
 	import { paletteSize } from '$lib/palette';
+	import type { LoadedImageType } from './loadedImage';
 
 	let {
+		loadedImageType,
 		palette = $bindable(),
 		width,
 		selectedColour = $bindable(),
 		splitPalettes = $bindable()
 	}: {
+		loadedImageType: LoadedImageType;
 		palette: Colour[];
 		width: number;
 		selectedColour?: Colour;
-		splitPalettes: Colour[][];
+		splitPalettes?: Colour[][];
 	} = $props();
 
 	let palette_display: Colour[][] | null = $derived.by(() => {
@@ -71,9 +74,11 @@
 	};
 
 	const schema_tools: ToolSchema[] = $derived.by(() => {
-		return [
-			tool_selectBackgroundColour,
-			{
+		const items: ToolSchema[] = [];
+
+		if (loadedImageType) {
+			items.push(tool_selectBackgroundColour);
+			items.push({
 				type: 'button',
 				icon: SquareSlash,
 				tooltip: 'Split the palette into groups of 16',
@@ -89,14 +94,16 @@
 					for (let i = 0; i < palettesRequired; i++) {
 						splitPalettes.push([
 							palette[0],
-							...palette.slice(i * paletteSize + 1, (i + 1) * paletteSize - 1)
+							...palette.slice(i * paletteSize + 1, (i + 1) * paletteSize)
 						]);
 					}
 
 					//#endregion get new palettes
 				}
-			}
-		];
+			});
+		}
+
+		return items;
 	});
 
 	//#region select background colour

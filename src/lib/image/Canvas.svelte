@@ -116,33 +116,35 @@
 	let muteFactor: number = $state(0.1);
 </script>
 
-<Card.Header>
-	<span class="font-bold">Image</span>
-</Card.Header>
+<Card.Root class="gap-2">
+	<Card.Header>
+		<span class="font-bold">Image</span>
+	</Card.Header>
 
-<Card.Content>
-	<canvas bind:this={canvas} style="image-rendering: pixelated;"></canvas>
-	<!-- <canvas bind:this={canvas} {height} {width} style="image-rendering: pixelated;"></canvas> -->
-</Card.Content>
+	<Card.Content>
+		<canvas bind:this={canvas} style="image-rendering: pixelated;"></canvas>
+		<!-- <canvas bind:this={canvas} {height} {width} style="image-rendering: pixelated;"></canvas> -->
+	</Card.Content>
 
-<Card.Footer class="flex flex-col items-start gap-2">
-	<span>Dimensions: {pixels!.length} x {pixels![0].length}</span>
+	<Card.Footer class="flex flex-col items-start gap-2">
+		<span>Dimensions: {pixels!.length} x {pixels![0].length}</span>
 
-	<!-- #region controls -->
+		<!-- #region controls -->
 
-	<!-- pixel width -->
-	<!--
-    <div class="flex items-center gap-2">
-        <span>Size:</span>
-        <Input type="range" bind:value={scaleFactor} min={1} max={10} step={0.1}/>
-    </div>
-    -->
+		<!-- pixel width -->
+		<!--
+        <div class="flex items-center gap-2">
+            <span>Size:</span>
+            <Input type="range" bind:value={scaleFactor} min={1} max={10} step={0.1}/>
+        </div>
+        -->
 
-	<!-- mute factor -->
-	<div class="flex items-center gap-2">
-		<span>Mute Factor:</span>
-		<Input type="range" bind:value={muteFactor} min={0.001} max={0.1} step={0.001} />
-	</div>
+		<!-- mute factor -->
+		<div class="flex items-center gap-2">
+			<span>Mute Factor:</span>
+			<Input type="range" bind:value={muteFactor} min={0.001} max={0.1} step={0.001} />
+		</div>
 
-	<!-- #endregion controls -->
-</Card.Footer>
+		<!-- #endregion controls -->
+	</Card.Footer>
+</Card.Root>

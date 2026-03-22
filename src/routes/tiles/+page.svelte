@@ -3,9 +3,9 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import ImageManager from '$lib/image/ImageManager';
 	import { LoaderCircle, X } from 'lucide-svelte';
-	import Palette from '$lib/image/Palette.svelte';
 	import type { Colour } from '$lib/colour';
-	import LoadedImageCard from '$lib/image/LoadedImageCard.svelte';
+	import * as Tabs from '$lib/components/ui/tabs/index.js';
+	import LoadedImage from '$lib/image/LoadedImage.svelte';
 
 	//#region file input
 	let file: File | undefined = $state(undefined);
@@ -53,8 +53,6 @@
 	let pixels: Colour[][] | null = $state(null);
 	let palette: Colour[] | null = $state(null);
 
-	let paletteColourSelected: Colour | undefined = $state(undefined);
-
 	let splitPalettes: Colour[][] = $state([]);
 	//#endregion image loaded
 </script>
@@ -73,17 +71,47 @@
 
 	{#if files != undefined}
 		{#if !imageLoading && imageLoaded}
-			<div class="flex gap-2">
-				<LoadedImageCard pixels={pixels!} filterBy={paletteColourSelected} {splitPalettes} />
+			{#if splitPalettes.length > 0}
+				<Tabs.Root
+					value="original"
+					class="mx-2"
+					onValueChange={(v: string) => {
+						console.log(v);
+					}}
+				>
+					<Tabs.List>
+						<Tabs.Trigger value="original" class="cursor-pointer">Original</Tabs.Trigger>
 
-				<!-- palette -->
-				<Palette
-					bind:palette={palette!}
-					width={18}
-					bind:selectedColour={paletteColourSelected}
+						{#each splitPalettes as splitPalette, index (splitPalette)}
+							<Tabs.Trigger value="palette-{index}" class="cursor-pointer">
+								{index}
+							</Tabs.Trigger>
+						{/each}
+					</Tabs.List>
+
+					<Tabs.Content value="original">
+						<LoadedImage
+							loadedImageType="originalImage"
+							pixels={pixels!}
+							palette={palette!}
+							bind:splitPalettes
+						/>
+					</Tabs.Content>
+
+					{#each splitPalettes as palette, index (palette)}
+						<Tabs.Content value="palette-{index}">
+							<LoadedImage loadedImageType="paletteSplit" pixels={pixels!} palette={palette!} />
+						</Tabs.Content>
+					{/each}
+				</Tabs.Root>
+			{:else}
+				<LoadedImage
+					loadedImageType="originalImage"
+					pixels={pixels!}
+					palette={palette!}
 					bind:splitPalettes
 				/>
-			</div>
+			{/if}
 		{:else if imageLoading}
 			<LoaderCircle class="animate-spin" />
 		{/if}
