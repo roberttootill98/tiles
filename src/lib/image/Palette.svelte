@@ -7,15 +7,18 @@
 	import { Toggle } from '$lib/components/ui/toggle/index.js';
 	import type { ComponentType } from 'svelte';
 	import { compareColours, type Colour } from '$lib/colour';
+	import { paletteSize } from '$lib/palette';
 
 	let {
 		palette = $bindable(),
 		width,
-		selectedColour = $bindable(undefined)
+		selectedColour = $bindable(),
+		splitPalettes = $bindable()
 	}: {
 		palette: Colour[];
 		width: number;
 		selectedColour?: Colour;
+		splitPalettes: Colour[][];
 	} = $props();
 
 	let palette_display: Colour[][] | null = $derived.by(() => {
@@ -74,7 +77,21 @@
 				type: 'button',
 				icon: SquareSlash,
 				tooltip: 'Split the palette into groups of 16',
-				onclick: (): void => {}
+				onclick: (): void => {
+					// determine number of palettes required
+					// palette -1 because we need the same background colour in each
+					const palettesRequired: number = Math.ceil(palette.length / (paletteSize - 1));
+
+					//#region get new palettes
+					splitPalettes = [];
+
+					// take palettes in order and just split
+					for (let i = 0; i < palettesRequired; i++) {
+						splitPalettes.push(palette.slice(i * paletteSize + 1, (i + 1) * paletteSize - 1));
+					}
+
+					//#endregion get new palettes
+				}
 			}
 		];
 	});
