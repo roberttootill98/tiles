@@ -4,8 +4,8 @@
 	import ImageManager from '$lib/image/ImageManager';
 	import { LoaderCircle, X } from 'lucide-svelte';
 	import Palette from '$lib/image/Palette.svelte';
-	import Canvas from '$lib/image/Canvas.svelte';
 	import type { Colour } from '$lib/colour';
+	import LoadedImageCard from '$lib/image/LoadedImageCard.svelte';
 
 	//#region file input
 	let file: File | undefined = $state(undefined);
@@ -54,6 +54,8 @@
 	let palette: Colour[] | null = $state(null);
 
 	let paletteColourSelected: Colour | undefined = $state(undefined);
+
+	let splitPalettes: Colour[][] = $state([]);
 	//#endregion image loaded
 </script>
 
@@ -72,11 +74,15 @@
 	{#if files != undefined}
 		{#if !imageLoading && imageLoaded}
 			<div class="flex gap-2">
-				<!-- load interactive image -->
-				<Canvas pixels={pixels!} filterBy={paletteColourSelected} />
+				<LoadedImageCard pixels={pixels!} filterBy={paletteColourSelected} {splitPalettes} />
 
 				<!-- palette -->
-				<Palette bind:palette={palette!} width={18} bind:selectedColour={paletteColourSelected} />
+				<Palette
+					bind:palette={palette!}
+					width={18}
+					bind:selectedColour={paletteColourSelected}
+					bind:splitPalettes
+				/>
 			</div>
 		{:else if imageLoading}
 			<LoaderCircle class="animate-spin" />
