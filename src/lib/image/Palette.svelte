@@ -72,7 +72,7 @@
 			tool_selectBackgroundColour,
 			{
 				type: 'button',
-				icon: PaintBucket,
+				icon: SquareSlash,
 				tooltip: 'Split the palette into groups of 16',
 				onclick: (): void => {}
 			}
@@ -83,7 +83,7 @@
 
 	const tool_selectBackgroundColour: ToolSchema = $state({
 		type: 'toggle',
-		icon: SquareSlash,
+		icon: PaintBucket,
 		tooltip: 'Select background colour (first in palette)',
 		onclick: (): void => {
 			tool_selectBackgroundColour.toggle_bind = !tool_selectBackgroundColour.toggle_bind;
