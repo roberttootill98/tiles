@@ -32,9 +32,9 @@
 				<Canvas pixels={pixels!} {filterBy} />
 			</Tabs.Content>
 
-			{#each splitPalettes as splitPalette, index (splitPalette)}
+			{#each splitPalettes as palette, index (palette)}
 				<Tabs.Content value="palette-{index}">
-					<Canvas pixels={pixels!} {filterBy} />
+					<Canvas pixels={pixels!} {filterBy} {palette} />
 				</Tabs.Content>
 			{/each}
 		</Tabs.Root>

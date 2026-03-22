@@ -1,15 +1,54 @@
 <script lang="ts">
-	import type { Colour } from '$lib/colour';
+	import { compareColours, type Colour } from '$lib/colour';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import Input from '$lib/components/ui/input/input.svelte';
 
 	let {
 		pixels,
-		filterBy
+		filterBy,
+		palette
 	}: {
 		pixels: Colour[][];
 		filterBy?: Colour;
+		palette?: Colour[];
 	} = $props();
+
+	//#region filter palette by colour
+
+	function filterPaletteByColour(): void {
+		if (palette == undefined) return;
+
+		const filteredPixels: Colour[][] = [];
+
+		for (const column of pixels) {
+			const row: Colour[] = [];
+
+			for (const colour of column) {
+				// get if colour in palette
+				const colourInPalette: boolean =
+					palette.find((colour_search: Colour) => {
+						return compareColours(colour, colour_search);
+					}) == null;
+
+				if (colourInPalette) {
+					// keep colour
+					row.push(colour);
+				} else {
+					// use background colour instead
+					row.push(palette![0]);
+				}
+			}
+
+			filteredPixels.push(row);
+		}
+
+		// override pixels
+		pixels = filteredPixels;
+	}
+
+	filterPaletteByColour();
+
+	//#endregion filter palette by colour
 
 	let canvas: HTMLCanvasElement;
 
