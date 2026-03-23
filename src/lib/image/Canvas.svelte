@@ -57,7 +57,6 @@
 
 	function mapColours(): void {
 		if (colourMappings == undefined) return;
-		console.log('mapping colours...');
 
 		const filteredPixels: Colour[][] = [];
 
