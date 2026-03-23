@@ -159,7 +159,7 @@
 				onclick: (): void => {
 					// determine number of palettes required
 					// palette -1 because we need the same background colour in each
-					const palettesRequired: number = Math.ceil(palette.length / (paletteSize - 1));
+					const palettesRequired: number = Math.ceil(palette.length / paletteSize);
 
 					//#region get new palettes
 					splitPalettes = [];
