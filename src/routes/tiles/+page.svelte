@@ -53,7 +53,15 @@
 	let pixels: Colour[][] | null = $state(null);
 	let palette: Colour[] | null = $state(null);
 
+	//#region split palette
 	let splitPalettes: Colour[][] = $state([]);
+
+	function removeSplitPalette(): void {
+		splitPalettes = [];
+	}
+
+	//#endregion split palette
+
 	//#endregion image loaded
 </script>
 
@@ -73,15 +81,22 @@
 		{#if !imageLoading && imageLoaded}
 			{#if splitPalettes.length > 0}
 				<Tabs.Root value="original" class="mx-2">
-					<Tabs.List>
-						<Tabs.Trigger value="original" class="cursor-pointer">Original</Tabs.Trigger>
+					<div class="flex gap-2">
+						<Tabs.List>
+							<Tabs.Trigger value="original" class="cursor-pointer">Original</Tabs.Trigger>
 
-						{#each splitPalettes as splitPalette, index (splitPalette)}
-							<Tabs.Trigger value="palette-{index}" class="cursor-pointer">
-								{index}
-							</Tabs.Trigger>
-						{/each}
-					</Tabs.List>
+							{#each splitPalettes as splitPalette, index (splitPalette)}
+								<Tabs.Trigger value="palette-{index}" class="cursor-pointer">
+									{index}
+								</Tabs.Trigger>
+							{/each}
+						</Tabs.List>
+
+						<Button onclick={removeSplitPalette}>
+							<X />
+							<span>Remove Split Palette</span>
+						</Button>
+					</div>
 
 					<Tabs.Content value="original">
 						<LoadedImage
