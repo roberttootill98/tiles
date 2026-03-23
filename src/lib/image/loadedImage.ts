@@ -1,2 +1,2 @@
 
-export type LoadedImageType = 'originalImage' | 'paletteSplit';
+export type LoadedImageType = 'originalImage' | 'paletteSplit' | 'reduced';

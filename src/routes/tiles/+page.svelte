@@ -3,7 +3,7 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import ImageManager from '$lib/image/ImageManager';
 	import { LoaderCircle, X } from 'lucide-svelte';
-	import type { Colour } from '$lib/colour';
+	import type { Colour, ColourMapping } from '$lib/colour';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import LoadedImage from '$lib/image/LoadedImage.svelte';
 
@@ -14,6 +14,9 @@
 	function clearFileInput(): void {
 		file = undefined;
 		files = undefined;
+
+		removeSplitPalette();
+		removeReducedPalette();
 	}
 
 	//#endregion file input
@@ -62,6 +65,28 @@
 
 	//#endregion split palette
 
+	//#region reduced palette
+
+	let reducedPalette: Colour[] | undefined = $state(undefined);
+	let colourMappings: ColourMapping[] | undefined = $state(undefined);
+
+	function removeReducedPalette(): void {
+		reducedPalette = undefined;
+		colourMappings = undefined;
+	}
+
+	//#endregion reduced palette
+
+	// if there are tabs
+	const tabs: boolean = $derived.by(() => {
+		return (
+			// there are some split palettes
+			splitPalettes.length > 0 ||
+			// there is a reduced palette
+			reducedPalette != undefined
+		);
+	});
+
 	//#endregion image loaded
 </script>
 
@@ -79,7 +104,7 @@
 
 	{#if files != undefined}
 		{#if !imageLoading && imageLoaded}
-			{#if splitPalettes.length > 0}
+			{#if tabs}
 				<Tabs.Root value="original" class="mx-2">
 					<div class="flex gap-2">
 						<Tabs.List>
@@ -90,12 +115,25 @@
 									{index}
 								</Tabs.Trigger>
 							{/each}
+
+							{#if reducedPalette != null}
+								<Tabs.Trigger value="reduced" class="cursor-pointer">Reduced</Tabs.Trigger>
+							{/if}
 						</Tabs.List>
 
-						<Button onclick={removeSplitPalette}>
-							<X />
-							<span>Remove Split Palette</span>
-						</Button>
+						{#if splitPalettes.length > 0}
+							<Button onclick={removeSplitPalette}>
+								<X />
+								<span>Remove Split Palette</span>
+							</Button>
+						{/if}
+
+						{#if reducedPalette != null}
+							<Button onclick={removeReducedPalette}>
+								<X />
+								<span>Remove Reduced Palette</span>
+							</Button>
+						{/if}
 					</div>
 
 					<Tabs.Content value="original">
@@ -112,6 +150,17 @@
 							<LoadedImage loadedImageType="paletteSplit" pixels={pixels!} palette={palette!} />
 						</Tabs.Content>
 					{/each}
+
+					{#if reducedPalette != null}
+						<Tabs.Content value="reduced">
+							<LoadedImage
+								loadedImageType="reduced"
+								pixels={pixels!}
+								palette={reducedPalette!}
+								{colourMappings}
+							/>
+						</Tabs.Content>
+					{/if}
 				</Tabs.Root>
 			{:else}
 				<LoadedImage
@@ -119,6 +168,8 @@
 					pixels={pixels!}
 					palette={palette!}
 					bind:splitPalettes
+					bind:reducedPalette
+					bind:colourMappings
 				/>
 			{/if}
 		{:else if imageLoading}

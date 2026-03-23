@@ -2,11 +2,11 @@
 	import ColourDisplay from './ColourDisplay.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import { Download, PaintBucket, SquareSlash } from 'lucide-svelte';
+	import { Download, PaintBucket, SquareArrowDown, SquareSlash } from 'lucide-svelte';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import { Toggle } from '$lib/components/ui/toggle/index.js';
 	import type { ComponentType } from 'svelte';
-	import { compareColours, type Colour } from '$lib/colour';
+	import { compareColours, type Colour, type ColourMapping } from '$lib/colour';
 	import { paletteSize } from '$lib/palette';
 	import type { LoadedImageType } from './loadedImage';
 	import { downloadBlob } from '$lib/utils';
@@ -17,13 +17,17 @@
 		palette = $bindable(),
 		width,
 		selectedColour = $bindable(),
-		splitPalettes = $bindable()
+		splitPalettes = $bindable(),
+		reducedPalette = $bindable(),
+		colourMappings = $bindable()
 	}: {
 		loadedImageType: LoadedImageType;
 		palette: Colour[];
 		width: number;
 		selectedColour?: Colour;
 		splitPalettes?: Colour[][];
+		reducedPalette?: Colour[];
+		colourMappings?: ColourMapping[];
 	} = $props();
 
 	// number of palette colours to show on each row
@@ -129,6 +133,44 @@
 					//#endregion get new palettes
 				}
 			});
+			items.push({
+				type: 'button',
+				icon: SquareArrowDown,
+				tooltip: 'Combine very similar colours',
+				onclick: (): void => {
+					// combine colours within threshold
+
+					// threshold as 8, since colours are actually rounded to closest 8 anyway
+					const threshold: number = 8 * 2;
+
+					// include background colour by defualt
+					reducedPalette = [palette[0]];
+					colourMappings = [];
+
+					// slice 1 to ignore background
+					for (const colour of palette.slice(1)) {
+						// check for similar colour within reduced colours
+						const colour_search = reducedPalette.slice(1).find((colour_search: Colour) => {
+							return (
+								Math.abs(colour_search.red - colour.red) < threshold &&
+								Math.abs(colour_search.green - colour.green) < threshold &&
+								Math.abs(colour_search.blue - colour.blue) < threshold
+							);
+						});
+
+						if (colour_search == null) {
+							// colour not found, so add to unique reduced colours
+							reducedPalette.push(colour);
+						} else {
+							// colour is found, so add mapping
+							colourMappings.push({
+								original: colour,
+								replaceWith: colour_search
+							});
+						}
+					}
+				}
+			});
 		}
 
 		return items;
@@ -207,7 +249,7 @@
 		<span>Palette length: {palette!.length}</span>
 	</Card.Content>
 
-	<Card.Footer class="flex gap-2">
+	<Card.Footer class="grid grid-cols-3 gap-2">
 		<!-- tools -->
 		{#each schema_tools as schema_tool (schema_tool)}
 			<Tooltip.Provider>

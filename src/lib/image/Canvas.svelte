@@ -1,22 +1,25 @@
 <script lang="ts">
-	import { compareColours, type Colour } from '$lib/colour';
+	import { compareColours, type Colour, type ColourMapping } from '$lib/colour';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import Input from '$lib/components/ui/input/input.svelte';
 
 	let {
 		pixels,
 		filterBy,
-		palette
+		palette,
+		colourMappings
 	}: {
 		pixels: Colour[][];
 		filterBy?: Colour;
 		palette?: Colour[];
+		colourMappings?: ColourMapping[];
 	} = $props();
 
 	//#region filter palette by colour
 
 	function filterPaletteByColour(): void {
 		if (palette == undefined) return;
+		if (colourMappings != undefined) return;
 
 		const filteredPixels: Colour[][] = [];
 
@@ -49,6 +52,48 @@
 	filterPaletteByColour();
 
 	//#endregion filter palette by colour
+
+	//#region map colours by colour mapping
+
+	function mapColours(): void {
+		if (colourMappings == undefined) return;
+		console.log('mapping colours...');
+
+		const filteredPixels: Colour[][] = [];
+
+		for (const column of pixels) {
+			const row: Colour[] = [];
+
+			for (const colour of column) {
+				const inPalette: boolean =
+					palette!.find((colour_search: Colour) => {
+						return compareColours(colour, colour_search);
+					}) != null;
+
+				if (inPalette) {
+					// keep colour
+					row.push(colour);
+				} else {
+					// find in colour mapping
+					const newColour: Colour = colourMappings.find((colourMapping: ColourMapping) => {
+						return compareColours(colour, colourMapping.original);
+					})!.replaceWith;
+
+					// use new colour
+					row.push(newColour);
+				}
+			}
+
+			filteredPixels.push(row);
+		}
+
+		// override pixels
+		pixels = filteredPixels;
+	}
+
+	mapColours();
+
+	//#endregion map colours by colour mapping
 
 	let canvas: HTMLCanvasElement;
 
