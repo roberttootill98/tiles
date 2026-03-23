@@ -54,6 +54,12 @@
 		<Canvas pixels={pixels!} filterBy={paletteColourSelected} {palette} {colourMappings} />
 
 		<!-- palette -->
-		<Palette {loadedImageType} {palette} width={18} bind:selectedColour={paletteColourSelected} />
+		<Palette
+			{loadedImageType}
+			{palette}
+			width={18}
+			bind:selectedColour={paletteColourSelected}
+			bind:splitPalettes
+		/>
 	{/if}
 </div>

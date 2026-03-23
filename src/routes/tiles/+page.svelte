@@ -60,6 +60,9 @@
 	let splitPalettes: Colour[][] = $state([]);
 
 	function removeSplitPalette(): void {
+		// move back to first tab
+		tabValue = 'original';
+
 		splitPalettes = [];
 	}
 
@@ -71,6 +74,9 @@
 	let colourMappings: ColourMapping[] | undefined = $state(undefined);
 
 	function removeReducedPalette(): void {
+		// move back to first tab
+		tabValue = 'original';
+
 		reducedPalette = undefined;
 		colourMappings = undefined;
 	}
@@ -187,6 +193,7 @@
 								pixels={pixels!}
 								palette={reducedPalette!}
 								{colourMappings}
+								bind:splitPalettes
 							/>
 						</Tabs.Content>
 					{/if}
@@ -201,6 +208,8 @@
 					bind:colourMappings
 				/>
 			{/if}
+
+			splitPalettes: {splitPalettes.length}
 		{:else if imageLoading}
 			<LoaderCircle class="animate-spin" />
 		{/if}
