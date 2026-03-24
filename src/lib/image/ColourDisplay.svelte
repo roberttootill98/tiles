@@ -41,7 +41,7 @@
 	{onclick}
 	onfocus={() => {}}
 	onblur={() => {}}
-	class="cursor-pointer"
+	class={onSelect != undefined ? 'cursor-pointer' : ''}
 	style="
 		width: {width}px; height: {width}px;
 		background: rgb({colour.red}, {colour.green}, {colour.blue});
