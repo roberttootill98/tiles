@@ -194,7 +194,7 @@
 									<span>View Reduced Palette</span>
 								</Dialog.Trigger>
 
-								<Dialog.Content class="w-fit max-w-none sm:max-w-fit">
+								<Dialog.Content class="w-fit max-w-none min-w-xl sm:max-w-fit">
 									<Dialog.Header>
 										<Dialog.Title>Reduced Palette</Dialog.Title>
 
