@@ -159,9 +159,14 @@
 				icon: SquareSlash,
 				tooltip: 'Split the palette into groups of 16',
 				onclick: (): void => {
+					// ignore background colour
+					const paletteWithoutBackground: Colour[] = palette.slice(1);
+
 					// determine number of palettes required
 					// palette -1 because we need the same background colour in each
-					const palettesRequired: number = Math.ceil(palette.length / paletteSize);
+					const palettesRequired: number = Math.ceil(
+						paletteWithoutBackground.length / (paletteSize - 1)
+					);
 
 					//#region get new palettes
 					splitPalettes = [];
@@ -170,7 +175,7 @@
 					for (let i = 0; i < palettesRequired; i++) {
 						splitPalettes.push([
 							palette[0],
-							...palette.slice(i * paletteSize + 1, (i + 1) * paletteSize)
+							...paletteWithoutBackground.slice(i * (paletteSize - 1), (i + 1) * (paletteSize - 1))
 						]);
 					}
 
