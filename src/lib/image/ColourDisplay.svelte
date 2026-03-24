@@ -9,12 +9,14 @@
 	}: {
 		colour: Colour;
 		width: number;
-		onSelect: (colour: Colour) => void;
+		onSelect?: (colour: Colour) => void;
 		selectedColour?: Colour;
 	} = $props();
 
 	function onclick(): void {
-		onSelect(colour);
+		if (onSelect != null) {
+			onSelect(colour);
+		}
 	}
 
 	const borderColour: string = $derived.by(() => {
@@ -41,9 +43,9 @@
 	onblur={() => {}}
 	class="cursor-pointer"
 	style="
-        width: {width}px; height: {width}px;
-        background: rgb({colour.red}, {colour.green}, {colour.blue});
-        {border};
-    "
+		width: {width}px; height: {width}px;
+		background: rgb({colour.red}, {colour.green}, {colour.blue});
+		{border};
+	"
 >
 </button>

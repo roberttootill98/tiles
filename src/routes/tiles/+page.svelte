@@ -1,11 +1,14 @@
 <script lang="ts">
-	import Button from '$lib/components/ui/button/button.svelte';
+	import Button, { buttonVariants } from '$lib/components/ui/button/button.svelte';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import ImageManager from '$lib/image/ImageManager';
-	import { LoaderCircle, X } from 'lucide-svelte';
+	import { ArrowRight, Eye, LoaderCircle, X } from 'lucide-svelte';
 	import type { Colour, ColourMapping } from '$lib/colour';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
+	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import LoadedImage from '$lib/image/LoadedImage.svelte';
+	import ColourDisplay from '$lib/image/ColourDisplay.svelte';
+	import RGBDisplay from '$lib/image/RGBDisplay.svelte';
 
 	//#region file input
 	let file: File | undefined = $state(undefined);
@@ -150,24 +153,62 @@
 							{/each}
 
 							{#if reducedPalette != null}
-								<Tabs.Trigger value="reduced" class={get_class_tabTrigger('reduced')}
-									>Reduced</Tabs.Trigger
-								>
+								<Tabs.Trigger value="reduced" class={get_class_tabTrigger('reduced')}>
+									Reduced
+								</Tabs.Trigger>
 							{/if}
 						</Tabs.List>
 
 						{#if splitPalettes.length > 0}
-							<Button onclick={removeSplitPalette}>
+							<Button onclick={removeSplitPalette} variant="outline">
 								<X />
 								<span>Remove Split Palette</span>
 							</Button>
 						{/if}
 
 						{#if reducedPalette != null}
-							<Button onclick={removeReducedPalette}>
+							<Button onclick={removeReducedPalette} variant="outline">
 								<X />
 								<span>Remove Reduced Palette</span>
 							</Button>
+
+							<Dialog.Root>
+								<Dialog.Trigger type="button" class={buttonVariants({ variant: 'outline' })}>
+									<Eye />
+									<span>View Reduced Palette</span>
+								</Dialog.Trigger>
+
+								<Dialog.Content class="w-lg max-w-lg sm:max-w-lg">
+									<Dialog.Header>
+										<Dialog.Title>Reduced Palette</Dialog.Title>
+
+										<Dialog.Description>
+											Which colours have been mapped to which.
+										</Dialog.Description>
+									</Dialog.Header>
+
+									<div class="grid grid-cols-3 gap-1">
+										{#each colourMappings as colourMapping (colourMapping)}
+											<!-- was - rgb -->
+											<RGBDisplay colour={colourMapping.original} />
+
+											<div class="flex items-center justify-center gap-2">
+												<!-- was  -->
+												<ColourDisplay colour={colourMapping.original} width={18} />
+
+												<!-- arrow -->
+												<ArrowRight />
+
+												<!-- replaced with -->
+												<ColourDisplay colour={colourMapping.replaceWith} width={18} />
+											</div>
+
+											<!-- replaced with - rgb -->
+											<RGBDisplay colour={colourMapping.replaceWith} />
+										{/each}
+									</div>
+								</Dialog.Content>
+							</Dialog.Root>
 						{/if}
 					</div>
 
