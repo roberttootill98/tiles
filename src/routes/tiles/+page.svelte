@@ -2,13 +2,14 @@
 	import Button, { buttonVariants } from '$lib/components/ui/button/button.svelte';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import ImageManager from '$lib/image/ImageManager';
-	import { ArrowRight, Eye, LoaderCircle, X } from 'lucide-svelte';
+	import { ArrowRight, Eye, LoaderCircle, MoveHorizontal, X } from 'lucide-svelte';
 	import type { Colour, ColourMapping } from '$lib/colour';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import LoadedImage from '$lib/image/LoadedImage.svelte';
 	import ColourDisplay from '$lib/image/ColourDisplay.svelte';
 	import RGBDisplay from '$lib/image/RGBDisplay.svelte';
+	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 
 	//#region file input
 	let file: File | undefined = $state(undefined);
@@ -82,6 +83,21 @@
 
 		reducedPalette = undefined;
 		colourMappings = undefined;
+	}
+
+	function swapColourMapping(colourMapping: ColourMapping): void {
+		//#region swap in reduced palette
+		const reducedPalette_index: number = reducedPalette!.indexOf(colourMapping.replaceWith);
+
+		reducedPalette![reducedPalette_index] = colourMapping.original;
+		//#endregion swap in reduced palette
+
+		//#region swap in colour mapping
+		const original_previous: Colour = colourMapping.original;
+
+		colourMapping.original = colourMapping.replaceWith;
+		colourMapping.replaceWith = original_previous;
+		//#endregion swap in colour mapping
 	}
 
 	//#endregion reduced palette
@@ -178,7 +194,7 @@
 									<span>View Reduced Palette</span>
 								</Dialog.Trigger>
 
-								<Dialog.Content class="w-lg max-w-lg sm:max-w-lg">
+								<Dialog.Content class="w-fit max-w-none sm:max-w-fit">
 									<Dialog.Header>
 										<Dialog.Title>Reduced Palette</Dialog.Title>
 
@@ -201,6 +217,26 @@
 
 												<!-- replaced with -->
 												<ColourDisplay colour={colourMapping.replaceWith} width={18} />
+
+												<!-- swap colours -->
+												<Tooltip.Provider>
+													<Tooltip.Root>
+														<Tooltip.Trigger>
+															<Button
+																onclick={() => swapColourMapping(colourMapping)}
+																variant="outline"
+																size="icon"
+																class="size-fit p-1"
+															>
+																<MoveHorizontal width={6} height={6} />
+															</Button>
+														</Tooltip.Trigger>
+
+														<Tooltip.Content>
+															<span>Swap colour mapping.</span>
+														</Tooltip.Content>
+													</Tooltip.Root>
+												</Tooltip.Provider>
 											</div>
 
 											<!-- replaced with - rgb -->
