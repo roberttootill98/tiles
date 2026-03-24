@@ -209,7 +209,7 @@
 											<RGBDisplay colour={colourMapping.original} />
 
 											<div class="flex items-center justify-center gap-2">
-												<!-- was  -->
+												<!-- was -->
 												<ColourDisplay colour={colourMapping.original} width={18} />
 
 												<!-- arrow -->
