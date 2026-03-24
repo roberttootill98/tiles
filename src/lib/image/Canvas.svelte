@@ -74,12 +74,20 @@
 					row.push(colour);
 				} else {
 					// find in colour mapping
-					const newColour: Colour = colourMappings.find((colourMapping: ColourMapping) => {
-						return compareColours(colour, colourMapping.original);
-					})!.replaceWith;
+					const colourMapping: ColourMapping | undefined = colourMappings.find(
+						(colourMapping: ColourMapping) => {
+							return compareColours(colour, colourMapping.original);
+						}
+					);
 
-					// use new colour
-					row.push(newColour);
+					if (colourMapping != undefined) {
+						// use new colour
+						row.push(colourMapping.replaceWith);
+					} else {
+						// no replacement colour found, probably in split palette
+						// just use background colour
+						row.push(palette![0]);
+					}
 				}
 			}
 

@@ -40,7 +40,7 @@
 		/>
 	{:else if loadedImageType == 'paletteSplit'}
 		<!-- interactive image -->
-		<Canvas pixels={pixels!} filterBy={paletteColourSelected} {palette} />
+		<Canvas pixels={pixels!} filterBy={paletteColourSelected} {palette} {colourMappings} />
 
 		<!-- palette -->
 		<Palette

@@ -261,7 +261,12 @@
 
 					{#each splitPalettes as palette, index (palette)}
 						<Tabs.Content value="palette-{index}">
-							<LoadedImage loadedImageType="paletteSplit" pixels={pixels!} palette={palette!} />
+							<LoadedImage
+								loadedImageType="paletteSplit"
+								pixels={pixels!}
+								palette={palette!}
+								{colourMappings}
+							/>
 						</Tabs.Content>
 					{/each}
 
