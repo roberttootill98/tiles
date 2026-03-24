@@ -76,6 +76,7 @@
 		icon: ComponentType;
 		tooltip: string;
 		onclick: () => void;
+		disabled?: boolean;
 		//#region toggle
 		toggle_bind?: boolean;
 		//#endregion toggle
@@ -147,7 +148,8 @@
 							});
 						}
 					}
-				}
+				},
+				disabled: reducedPalette != undefined && colourMappings != undefined
 			});
 		}
 
@@ -173,7 +175,8 @@
 					}
 
 					//#endregion get new palettes
-				}
+				},
+				disabled: splitPalettes != undefined
 			});
 		}
 
@@ -262,6 +265,7 @@
 						{#if schema_tool.type == 'button'}
 							<Button
 								onclick={schema_tool.onclick}
+								disabled={schema_tool.disabled}
 								size="sm"
 								variant="outline"
 								class="bg-transparent! px-2! hover:bg-muted!"
@@ -271,6 +275,7 @@
 						{:else if schema_tool.type == 'toggle'}
 							<Toggle
 								onclick={schema_tool.onclick}
+								disabled={schema_tool.disabled}
 								variant="outline"
 								class="
                                     cursor-pointer

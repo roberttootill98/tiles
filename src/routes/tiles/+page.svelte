@@ -61,13 +61,13 @@
 	let palette: Colour[] | null = $state(null);
 
 	//#region split palette
-	let splitPalettes: Colour[][] = $state([]);
+	let splitPalettes: Colour[][] | undefined = $state(undefined);
 
 	function removeSplitPalette(): void {
 		// move back to first tab
 		tabValue = 'original';
 
-		splitPalettes = [];
+		splitPalettes = undefined;
 	}
 
 	//#endregion split palette
@@ -106,7 +106,7 @@
 	const tabs: boolean = $derived.by(() => {
 		return (
 			// there are some split palettes
-			splitPalettes.length > 0 ||
+			(splitPalettes != undefined && splitPalettes.length > 0) ||
 			// there is a reduced palette
 			reducedPalette != undefined
 		);
@@ -175,7 +175,7 @@
 							{/if}
 						</Tabs.List>
 
-						{#if splitPalettes.length > 0}
+						{#if splitPalettes != undefined && splitPalettes.length > 0}
 							<Button onclick={removeSplitPalette} variant="outline">
 								<X />
 								<span>Remove Split Palette</span>
@@ -254,6 +254,8 @@
 							pixels={pixels!}
 							palette={palette!}
 							bind:splitPalettes
+							bind:reducedPalette
+							bind:colourMappings
 						/>
 					</Tabs.Content>
 
@@ -285,8 +287,6 @@
 					bind:colourMappings
 				/>
 			{/if}
-
-			splitPalettes: {splitPalettes.length}
 		{:else if imageLoading}
 			<LoaderCircle class="animate-spin" />
 		{/if}
