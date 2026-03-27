@@ -100,7 +100,7 @@
 	const class_toolButton: string = 'bg-transparent! px-2! hover:bg-muted!';
 
 	// threshold as multiple of 8, since colours are actually rounded to closest 8 anyway
-	let threshold: number = $state(8 * 2 * 2);
+	let threshold: number = $state(8 * 3);
 
 	const schema_tools: ToolSchema[] = $derived.by(() => {
 		const items: ToolSchema[] = [
