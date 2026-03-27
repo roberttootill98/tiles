@@ -14,3 +14,7 @@ export function compareColours(colour1: Colour, colour2: Colour): boolean {
         colour1.blue == colour2.blue
     );
 }
+
+export function get_luminance(colour: Colour): number {
+  return 0.2126 * colour.red + 0.7152 * colour.green + 0.0722 * colour.blue;
+}

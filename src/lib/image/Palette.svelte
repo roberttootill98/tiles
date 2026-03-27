@@ -2,11 +2,11 @@
 	import ColourDisplay from './ColourDisplay.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import { Download, PaintBucket, SquareArrowDown, SquareSlash } from 'lucide-svelte';
+	import { Download, ListOrdered, PaintBucket, SquareArrowDown, SquareSlash } from 'lucide-svelte';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import { Toggle } from '$lib/components/ui/toggle/index.js';
 	import type { ComponentType } from 'svelte';
-	import { compareColours, type Colour, type ColourMapping } from '$lib/colour';
+	import { compareColours, get_luminance, type Colour, type ColourMapping } from '$lib/colour';
 	import { paletteSize } from '$lib/palette';
 	import type { LoadedImageType } from './loadedImage';
 	import { downloadBlob } from '$lib/utils';
@@ -110,6 +110,24 @@
 		];
 
 		if (loadedImageType == 'originalImage') {
+			items.push({
+				type: 'button',
+				icon: ListOrdered,
+				tooltip: 'Order palette (not including background colour)',
+				onclick: (): void => {
+					palette = [
+						palette[0],
+						...palette.slice(1).sort((colour1: Colour, colour2: Colour) => {
+							const luminance1: number = get_luminance(colour1);
+							const luminance2: number = get_luminance(colour2);
+
+							return luminance1 - luminance2;
+						})
+					];
+				},
+				disabled: splitPalettes != undefined
+			});
+
 			items.push(tool_selectBackgroundColour);
 
 			items.push({
