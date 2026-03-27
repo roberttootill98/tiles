@@ -16,5 +16,13 @@ export function compareColours(colour1: Colour, colour2: Colour): boolean {
 }
 
 export function get_luminance(colour: Colour): number {
-  return 0.2126 * colour.red + 0.7152 * colour.green + 0.0722 * colour.blue;
+    return 0.2126 * colour.red + 0.7152 * colour.green + 0.0722 * colour.blue;
+}
+
+export function get_colorDistance(colour1: Colour, colour2: Colour): number {
+    return Math.sqrt(
+        (colour1.red - colour2.red) ** 2 +
+        (colour1.green - colour2.green) ** 2 +
+        (colour1.blue - colour2.blue) ** 2
+    );
 }

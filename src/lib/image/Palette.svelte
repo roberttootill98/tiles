@@ -6,7 +6,13 @@
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import { Toggle } from '$lib/components/ui/toggle/index.js';
 	import type { ComponentType } from 'svelte';
-	import { compareColours, get_luminance, type Colour, type ColourMapping } from '$lib/colour';
+	import {
+		compareColours,
+		get_colorDistance,
+		get_luminance,
+		type Colour,
+		type ColourMapping
+	} from '$lib/colour';
 	import { paletteSize } from '$lib/palette';
 	import type { LoadedImageType } from './loadedImage';
 	import { downloadBlob } from '$lib/utils';
@@ -110,6 +116,7 @@
 		];
 
 		if (loadedImageType == 'originalImage') {
+			// order palette
 			items.push({
 				type: 'button',
 				icon: ListOrdered,
@@ -128,8 +135,10 @@
 				disabled: splitPalettes != undefined
 			});
 
+			// select background colour
 			items.push(tool_selectBackgroundColour);
 
+			// combine similar
 			items.push({
 				type: 'button',
 				icon: SquareArrowDown,
@@ -138,7 +147,7 @@
 					// combine colours within threshold
 
 					// threshold as 8, since colours are actually rounded to closest 8 anyway
-					const threshold: number = 8 * 2;
+					const threshold: number = 8 * 2 * 2;
 
 					// include background colour by defualt
 					reducedPalette = [palette[0]];
@@ -148,11 +157,13 @@
 					for (const colour of palette.slice(1)) {
 						// check for similar colour within reduced colours
 						const colour_search = reducedPalette.slice(1).find((colour_search: Colour) => {
-							return (
-								Math.abs(colour_search.red - colour.red) < threshold &&
-								Math.abs(colour_search.green - colour.green) < threshold &&
-								Math.abs(colour_search.blue - colour.blue) < threshold
-							);
+							return get_colorDistance(colour_search, colour) < threshold;
+
+							// return (
+							// 	Math.abs(colour_search.red - colour.red) < threshold &&
+							// 	Math.abs(colour_search.green - colour.green) < threshold &&
+							// 	Math.abs(colour_search.blue - colour.blue) < threshold
+							// );
 						});
 
 						if (colour_search == null) {
@@ -172,6 +183,7 @@
 		}
 
 		if (['originalImage', 'reduced'].includes(loadedImageType)) {
+			// split palette into groups of 16
 			items.push({
 				type: 'button',
 				icon: SquareSlash,
