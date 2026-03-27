@@ -10,6 +10,7 @@
 	import ColourDisplay from '$lib/image/ColourDisplay.svelte';
 	import RGBDisplay from '$lib/image/RGBDisplay.svelte';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
+	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
 
 	//#region file input
 	let file: File | undefined = $state(undefined);
@@ -203,46 +204,48 @@
 										</Dialog.Description>
 									</Dialog.Header>
 
-									<div class="grid grid-cols-3 gap-1">
-										{#each colourMappings as colourMapping (colourMapping)}
-											<!-- was - rgb -->
-											<RGBDisplay colour={colourMapping.original} />
+									<ScrollArea>
+										<div class="mr-4 grid max-h-96 grid-cols-3 gap-1">
+											{#each colourMappings as colourMapping (colourMapping)}
+												<!-- was - rgb -->
+												<RGBDisplay colour={colourMapping.original} />
 
-											<div class="flex items-center justify-center gap-2">
-												<!-- was -->
-												<ColourDisplay colour={colourMapping.original} width={18} />
+												<div class="flex items-center justify-center gap-2">
+													<!-- was -->
+													<ColourDisplay colour={colourMapping.original} width={18} />
 
-												<!-- arrow -->
-												<ArrowRight />
+													<!-- arrow -->
+													<ArrowRight />
 
-												<!-- replaced with -->
-												<ColourDisplay colour={colourMapping.replaceWith} width={18} />
+													<!-- replaced with -->
+													<ColourDisplay colour={colourMapping.replaceWith} width={18} />
 
-												<!-- swap colours -->
-												<Tooltip.Provider>
-													<Tooltip.Root>
-														<Tooltip.Trigger>
-															<Button
-																onclick={() => swapColourMapping(colourMapping)}
-																variant="outline"
-																size="icon"
-																class="size-fit p-1"
-															>
-																<MoveHorizontal width={6} height={6} />
-															</Button>
-														</Tooltip.Trigger>
+													<!-- swap colours -->
+													<Tooltip.Provider>
+														<Tooltip.Root>
+															<Tooltip.Trigger>
+																<Button
+																	onclick={() => swapColourMapping(colourMapping)}
+																	variant="outline"
+																	size="icon"
+																	class="size-fit p-1"
+																>
+																	<MoveHorizontal width={6} height={6} />
+																</Button>
+															</Tooltip.Trigger>
 
-														<Tooltip.Content>
-															<span>Swap colour mapping.</span>
-														</Tooltip.Content>
-													</Tooltip.Root>
-												</Tooltip.Provider>
-											</div>
+															<Tooltip.Content>
+																<span>Swap colour mapping.</span>
+															</Tooltip.Content>
+														</Tooltip.Root>
+													</Tooltip.Provider>
+												</div>
 
-											<!-- replaced with - rgb -->
-											<RGBDisplay colour={colourMapping.replaceWith} />
-										{/each}
-									</div>
+												<!-- replaced with - rgb -->
+												<RGBDisplay colour={colourMapping.replaceWith} />
+											{/each}
+										</div>
+									</ScrollArea>
 								</Dialog.Content>
 							</Dialog.Root>
 						{/if}
