@@ -1,8 +1,15 @@
 <script lang="ts">
 	import ColourDisplay from './ColourDisplay.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
-	import Button from '$lib/components/ui/button/button.svelte';
-	import { Download, ListOrdered, PaintBucket, SquareArrowDown, SquareSlash } from 'lucide-svelte';
+	import Button, { buttonVariants } from '$lib/components/ui/button/button.svelte';
+	import {
+		Download,
+		ListOrdered,
+		PaintBucket,
+		Settings,
+		SquareArrowDown,
+		SquareSlash
+	} from 'lucide-svelte';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import { Toggle } from '$lib/components/ui/toggle/index.js';
 	import type { ComponentType } from 'svelte';
@@ -17,6 +24,8 @@
 	import type { LoadedImageType } from './loadedImage';
 	import { downloadBlob } from '$lib/utils';
 	import EmptyPaletteSlot from './EmptyPaletteSlot.svelte';
+	import * as Dialog from '$lib/components/ui/dialog/index.js';
+	import Input from '$lib/components/ui/input/input.svelte';
 
 	let {
 		loadedImageType,
@@ -88,6 +97,11 @@
 		//#endregion toggle
 	};
 
+	const class_toolButton: string = 'bg-transparent! px-2! hover:bg-muted!';
+
+	// threshold as multiple of 8, since colours are actually rounded to closest 8 anyway
+	let threshold: number = $state(8 * 2 * 2);
+
 	const schema_tools: ToolSchema[] = $derived.by(() => {
 		const items: ToolSchema[] = [
 			{
@@ -145,9 +159,6 @@
 				tooltip: 'Combine very similar colours',
 				onclick: (): void => {
 					// combine colours within threshold
-
-					// threshold as 8, since colours are actually rounded to closest 8 anyway
-					const threshold: number = 8 * 2 * 2;
 
 					// include background colour by defualt
 					reducedPalette = [palette[0]];
@@ -218,6 +229,10 @@
 		return items;
 	});
 
+	let showSettings: boolean = $derived.by(() => {
+		return loadedImageType == 'originalImage';
+	});
+
 	//#region select background colour
 
 	const tool_selectBackgroundColour: ToolSchema = $state({
@@ -259,8 +274,34 @@
 </script>
 
 <Card.Root class="gap-2">
-	<Card.Header>
+	<Card.Header class="flex items-center">
+		<!-- title -->
 		<span class="font-bold">Palette</span>
+
+		<!-- options -->
+		{#if showSettings}
+			<div class="ml-auto">
+				<Dialog.Root>
+					<Dialog.Trigger type="button" class={buttonVariants({ variant: 'ghost', size: 'icon' })}>
+						<Settings />
+					</Dialog.Trigger>
+
+					<Dialog.Content class="w-fit max-w-none min-w-xl sm:max-w-fit">
+						<Dialog.Header>
+							<Dialog.Title>Palette Settings</Dialog.Title>
+						</Dialog.Header>
+
+						<div class="text-xs text-muted-foreground">
+							<!-- threshold control -->
+							<div class="flex items-center gap-2">
+								<span>Combine Colours Threshold ({threshold}):</span>
+								<Input type="range" bind:value={threshold} min={8} step={8} />
+							</div>
+						</div>
+					</Dialog.Content>
+				</Dialog.Root>
+			</div>
+		{/if}
 	</Card.Header>
 
 	<Card.Content class="flex flex-col">
@@ -303,7 +344,7 @@
 								disabled={schema_tool.disabled}
 								size="sm"
 								variant="outline"
-								class="bg-transparent! px-2! hover:bg-muted!"
+								class={class_toolButton}
 							>
 								<schema_tool.icon />
 							</Button>
