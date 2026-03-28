@@ -69,11 +69,30 @@
 			} else {
 				rows.push(row);
 				row = [colour];
+
+				if (i == palette.length - 1) {
+					// fill out to end of row
+					rows.push(row);
+				}
 			}
 		}
 
 		return rows;
 	});
+
+	// get number of empty slots in palette
+	function get_numberOfEmptySlots(): number {
+		const emptySlotsTotal: number =
+			Math.ceil(palette.length / paletteSize) * paletteSize - palette.length;
+
+		if (emptySlotsTotal == rowWidth) {
+			return 0;
+		} else if (emptySlotsTotal > rowWidth) {
+			return emptySlotsTotal - rowWidth;
+		} else {
+			return emptySlotsTotal;
+		}
+	}
 
 	function onSelect(colour: Colour): void {
 		if (tool_selectBackgroundColour.toggle_bind) {
@@ -355,9 +374,9 @@
 				{/each}
 
 				<!-- free slots to make up rest of row or palette width -->
-				{#if i == palette_display!.length - 1 && palette_display![i].length != rowWidth}
+				{#if i == palette_display!.length - 1}
 					<!-- only render number required to get row complete -->
-					{#each { length: rowWidth - (palette.length % paletteSize) }}
+					{#each { length: get_numberOfEmptySlots() }}
 						<EmptyPaletteSlot {width} />
 					{/each}
 				{/if}
