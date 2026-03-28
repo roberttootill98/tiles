@@ -158,77 +158,88 @@
 						</Tabs.List>
 
 						{#if splitPalettes != undefined && splitPalettes.length > 0}
-							<Button onclick={removeSplitPalette} variant="outline">
-								<X />
-								<span>Remove Split Palette</span>
-							</Button>
+							<div class="flex items-center rounded-lg border text-xs">
+								<strong class="px-2">Split Palette</strong>
+
+								<!-- remove -->
+								<Button onclick={removeSplitPalette} variant="ghost" size="icon-sm">
+									<X />
+								</Button>
+							</div>
 						{/if}
 
 						{#if reducedPalette != null}
-							<Button onclick={removeReducedPalette} variant="outline">
-								<X />
-								<span>Remove Reduced Palette</span>
-							</Button>
+							<div class="flex items-center rounded-lg border text-xs">
+								<strong class="px-2">Reduced Palette</strong>
 
-							<Dialog.Root>
-								<Dialog.Trigger type="button" class={buttonVariants({ variant: 'outline' })}>
-									<Eye />
-									<span>View Reduced Palette</span>
-								</Dialog.Trigger>
+								<!-- view -->
+								<Dialog.Root>
+									<Dialog.Trigger
+										type="button"
+										class={buttonVariants({ variant: 'ghost', size: 'icon-sm' })}
+									>
+										<Eye />
+									</Dialog.Trigger>
 
-								<Dialog.Content class="w-fit max-w-none min-w-xl sm:max-w-fit">
-									<Dialog.Header>
-										<Dialog.Title>Reduced Palette</Dialog.Title>
+									<Dialog.Content class="w-fit max-w-none min-w-xl sm:max-w-fit">
+										<Dialog.Header>
+											<Dialog.Title>Reduced Palette</Dialog.Title>
 
-										<Dialog.Description>
-											Which colours have been mapped to which.
-										</Dialog.Description>
-									</Dialog.Header>
+											<Dialog.Description>
+												Which colours have been mapped to which.
+											</Dialog.Description>
+										</Dialog.Header>
 
-									<ScrollArea>
-										<div class="mr-4 grid max-h-96 grid-cols-3 gap-1">
-											{#each colourMappings as colourMapping (colourMapping)}
-												<!-- was - rgb -->
-												<RGBDisplay colour={colourMapping.original} />
+										<ScrollArea>
+											<div class="mr-4 grid max-h-96 grid-cols-3 gap-1">
+												{#each colourMappings as colourMapping (colourMapping)}
+													<!-- was - rgb -->
+													<RGBDisplay colour={colourMapping.original} />
 
-												<div class="flex items-center justify-center gap-2">
-													<!-- was -->
-													<ColourDisplay colour={colourMapping.original} width={18} />
+													<div class="flex items-center justify-center gap-2">
+														<!-- was -->
+														<ColourDisplay colour={colourMapping.original} width={18} />
 
-													<!-- arrow -->
-													<ArrowRight />
+														<!-- arrow -->
+														<ArrowRight />
 
-													<!-- replaced with -->
-													<ColourDisplay colour={colourMapping.replaceWith} width={18} />
+														<!-- replaced with -->
+														<ColourDisplay colour={colourMapping.replaceWith} width={18} />
 
-													<!-- swap colours -->
-													<Tooltip.Provider>
-														<Tooltip.Root>
-															<Tooltip.Trigger>
-																<Button
-																	onclick={() => swapColourMapping(colourMapping)}
-																	variant="outline"
-																	size="icon"
-																	class="size-fit p-1"
-																>
-																	<MoveHorizontal width={6} height={6} />
-																</Button>
-															</Tooltip.Trigger>
+														<!-- swap colours -->
+														<Tooltip.Provider>
+															<Tooltip.Root>
+																<Tooltip.Trigger>
+																	<Button
+																		onclick={() => swapColourMapping(colourMapping)}
+																		variant="outline"
+																		size="icon"
+																		class="size-fit p-1"
+																	>
+																		<MoveHorizontal width={6} height={6} />
+																	</Button>
+																</Tooltip.Trigger>
 
-															<Tooltip.Content>
-																<span>Swap colour mapping.</span>
-															</Tooltip.Content>
-														</Tooltip.Root>
-													</Tooltip.Provider>
-												</div>
+																<Tooltip.Content>
+																	<span>Swap colour mapping.</span>
+																</Tooltip.Content>
+															</Tooltip.Root>
+														</Tooltip.Provider>
+													</div>
 
-												<!-- replaced with - rgb -->
-												<RGBDisplay colour={colourMapping.replaceWith} />
-											{/each}
-										</div>
-									</ScrollArea>
-								</Dialog.Content>
-							</Dialog.Root>
+													<!-- replaced with - rgb -->
+													<RGBDisplay colour={colourMapping.replaceWith} />
+												{/each}
+											</div>
+										</ScrollArea>
+									</Dialog.Content>
+								</Dialog.Root>
+
+								<!-- remove -->
+								<Button onclick={removeReducedPalette} variant="ghost" size="icon-sm">
+									<X />
+								</Button>
+							</div>
 						{/if}
 					</div>
 
