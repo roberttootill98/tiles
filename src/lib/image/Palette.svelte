@@ -176,8 +176,7 @@
 							return luminance1 - luminance2;
 						})
 					];
-				},
-				disabled: splitPalettes != undefined
+				}
 			});
 
 			// select background colour
