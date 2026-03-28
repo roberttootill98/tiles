@@ -3,6 +3,7 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import Button, { buttonVariants } from '$lib/components/ui/button/button.svelte';
 	import {
+		CircleArrowDown,
 		Download,
 		ListOrdered,
 		PaintBucket,
@@ -15,10 +16,10 @@
 	import type { ComponentType } from 'svelte';
 	import {
 		compareColours,
-		get_colorDistance,
 		get_luminance,
 		type Colour,
-		type ColourMapping
+		type ColourMapping,
+		type CombinationResult
 	} from '$lib/colour';
 	import { paletteSize } from '$lib/palette';
 	import type { LoadedImageType } from './loadedImage';
@@ -26,6 +27,9 @@
 	import EmptyPaletteSlot from './EmptyPaletteSlot.svelte';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import Input from '$lib/components/ui/input/input.svelte';
+	import { kMeans } from '$lib/kMeans';
+	import * as Select from '$lib/components/ui/select/index.js';
+	import { distanceCombination } from '$lib/distanceCombination';
 
 	let {
 		loadedImageType,
@@ -102,6 +106,14 @@
 	// threshold as multiple of 8, since colours are actually rounded to closest 8 anyway
 	let threshold: number = $state(8 * 3);
 
+	//#region combine mode selection
+
+	const combineModes: string[] = ['Basic Distance', 'Root Distance', 'KMeans'];
+
+	let combineMode_selected: string = $state(combineModes[0]);
+
+	//#endregion combine mode selection
+
 	const schema_tools: ToolSchema[] = $derived.by(() => {
 		const items: ToolSchema[] = [
 			{
@@ -155,39 +167,51 @@
 			// combine similar
 			items.push({
 				type: 'button',
-				icon: SquareArrowDown,
+				icon: CircleArrowDown,
 				tooltip: 'Combine very similar colours',
 				onclick: (): void => {
-					// combine colours within threshold
+					let combinationResult: CombinationResult;
 
-					// include background colour by defualt
-					reducedPalette = [palette[0]];
-					colourMappings = [];
-
-					// slice 1 to ignore background
-					for (const colour of palette.slice(1)) {
-						// check for similar colour within reduced colours
-						const colour_search = reducedPalette.slice(1).find((colour_search: Colour) => {
-							return get_colorDistance(colour_search, colour) < threshold;
-
-							// return (
-							// 	Math.abs(colour_search.red - colour.red) < threshold &&
-							// 	Math.abs(colour_search.green - colour.green) < threshold &&
-							// 	Math.abs(colour_search.blue - colour.blue) < threshold
-							// );
-						});
-
-						if (colour_search == null) {
-							// colour not found, so add to unique reduced colours
-							reducedPalette.push(colour);
-						} else {
-							// colour is found, so add mapping
-							colourMappings.push({
-								original: colour,
-								replaceWith: colour_search
+					switch (combineMode_selected) {
+						case 'Basic Distance':
+							combinationResult = distanceCombination('basic', palette.slice(1), threshold);
+							break;
+						case 'Root Distance':
+							combinationResult = distanceCombination('basic', palette.slice(1), threshold);
+							break;
+						case 'KMeans':
+							combinationResult = kMeans(palette.slice(1), {
+								threshold,
+								maxIterations: 20
 							});
-						}
+
+							break;
+						default:
+							throw new Error('unsupported combination mode!');
 					}
+
+					reducedPalette = [palette[0], ...combinationResult.reducedPalette];
+					colourMappings = combinationResult.colourMappings;
+				},
+				disabled: reducedPalette != undefined && colourMappings != undefined
+			});
+
+			// combine until within palette size
+			items.push({
+				type: 'button',
+				icon: SquareArrowDown,
+				tooltip: 'Combine colours until within palette size',
+				onclick: (): void => {
+					// combine colours until within palette size
+					// include background colour by defualt
+					// reducedPalette = [palette[0]];
+					// colourMappings = [];
+					// const target_palette: Colour[] = [...palette];
+					// let threshold_reduceAll: number = 0;
+					// // while (target_palette.length > 0) {
+					// // 	threshold_reduceAll += 8;
+					// // 	target_palette
+					// // }
 				},
 				disabled: reducedPalette != undefined && colourMappings != undefined
 			});
@@ -291,7 +315,26 @@
 							<Dialog.Title>Palette Settings</Dialog.Title>
 						</Dialog.Header>
 
-						<div class="text-xs text-muted-foreground">
+						<!-- options -->
+						<div class="flex flex-col gap-2 text-xs text-muted-foreground">
+							<Select.Root type="single" bind:value={combineMode_selected}>
+								<Select.Trigger>
+									{combineMode_selected}
+								</Select.Trigger>
+
+								<Select.Content>
+									<Select.Group>
+										<Select.Label>Colour Combination Modes</Select.Label>
+
+										{#each combineModes as combineMode (combineMode)}
+											<Select.Item value={combineMode}>
+												{combineMode}
+											</Select.Item>
+										{/each}
+									</Select.Group>
+								</Select.Content>
+							</Select.Root>
+
 							<!-- threshold control -->
 							<div class="flex items-center gap-2">
 								<span>Combine Colours Threshold ({threshold}):</span>

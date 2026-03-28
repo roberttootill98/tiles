@@ -1,4 +1,10 @@
-import { compareColours, get_colourDistance, type Colour, type ColourMapping } from './colour';
+import {
+	compareColours,
+	get_colourDistance,
+	type Colour,
+	type ColourMapping,
+	type CombinationResult
+} from './colour';
 
 // provide either k or threshold, not both
 type KMeansOptions = {
@@ -7,11 +13,6 @@ type KMeansOptions = {
 	// how close colours should be
 	threshold?: number;
 	maxIterations: number;
-};
-
-type KMeansResult = {
-	reducedPalette: Colour[];
-	colourMappings: ColourMapping[];
 };
 
 function average(palette: Colour[]): Colour {
@@ -32,7 +33,7 @@ function average(palette: Colour[]): Colour {
 	};
 }
 
-export function kMeans(palette: Colour[], options: KMeansOptions): KMeansResult {
+export function kMeans(palette: Colour[], options: KMeansOptions): CombinationResult {
 	const { k, threshold, maxIterations } = options;
 
 	if (palette.length == 0) {
