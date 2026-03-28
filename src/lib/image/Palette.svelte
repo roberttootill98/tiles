@@ -120,7 +120,7 @@
 				type: 'button',
 				icon: Download,
 				tooltip: 'Download as .pal file',
-				onclick: () => {
+				onclick: (): void => {
 					const content: string[] = [
 						// palette type declaration
 						'JASC-PAL',
