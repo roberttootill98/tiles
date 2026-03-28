@@ -119,20 +119,8 @@
 		tabValue = tabValue_new;
 	}
 
-	function get_class_tabTrigger(tabName: string): string {
-		const class_currentTab_text: string = 'text-primary-foreground';
-
-		const classes_currentTab: string = [
-			'bg-primary',
-			class_currentTab_text,
-			`dark:${class_currentTab_text}`,
-			`hover:${class_currentTab_text}`,
-			`dark:hover:${class_currentTab_text}`,
-			`data-active:${class_currentTab_text}`,
-			`dark:data-active:${class_currentTab_text}`
-		].join(' ');
-
-		return ['cursor-pointer', tabValue == tabName ? classes_currentTab : ''].join(' ');
+	function get_class_tabTrigger(): string {
+		return ['cursor-pointer'].join(' ');
 	}
 
 	//#endregion image loaded
@@ -156,23 +144,16 @@
 				<Tabs.Root value={tabValue} class="mx-2" onValueChange={onTabValueChange}>
 					<div class="flex gap-2">
 						<Tabs.List>
-							<Tabs.Trigger value="original" class={get_class_tabTrigger('original')}
-								>Original</Tabs.Trigger
-							>
+							<Tabs.Trigger value="original" class={get_class_tabTrigger()}>Original</Tabs.Trigger>
 
 							{#each splitPalettes as splitPalette, index (splitPalette)}
-								<Tabs.Trigger
-									value="palette-{index}"
-									class={get_class_tabTrigger(`palette-${index}`)}
-								>
+								<Tabs.Trigger value="palette-{index}" class={get_class_tabTrigger()}>
 									{index}
 								</Tabs.Trigger>
 							{/each}
 
 							{#if reducedPalette != null}
-								<Tabs.Trigger value="reduced" class={get_class_tabTrigger('reduced')}>
-									Reduced
-								</Tabs.Trigger>
+								<Tabs.Trigger value="reduced" class={get_class_tabTrigger()}>Reduced</Tabs.Trigger>
 							{/if}
 						</Tabs.List>
 
