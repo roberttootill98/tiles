@@ -275,8 +275,6 @@
 								//#endregion combine colour mappings
 							}
 
-							reducedPalette = [palette[0], ...combinationResult.reducedPalette];
-
 							combinationResult.colourMappings = colourMappings_ongoing;
 
 							break;
