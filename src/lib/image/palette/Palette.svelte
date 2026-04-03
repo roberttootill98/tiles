@@ -424,32 +424,35 @@
 		{/if}
 	</Card.Header>
 
-	<Card.Content class="flex flex-col">
-		{#each palette_display as column, i (column)}
-			<div class="flex">
-				{#each column as colour (colour)}
-					<ColourDisplay {colour} {width} {onSelect} {selectedColour} />
-				{/each}
+	<Card.Content class="flex flex-col gap-2">
+		<!-- palette display -->
+		<div>
+			{#each palette_display as column, i (column)}
+				<div class="flex">
+					{#each column as colour (colour)}
+						<ColourDisplay {colour} {width} {onSelect} {selectedColour} />
+					{/each}
 
-				<!-- free slots to make up rest of row or palette width -->
-				{#if i == palette_display!.length - 1}
-					<!-- only render number required to get row complete -->
-					{#each { length: get_numberOfEmptySlots() }}
+					<!-- free slots to make up rest of row or palette width -->
+					{#if i == palette_display!.length - 1}
+						<!-- only render number required to get row complete -->
+						{#each { length: get_numberOfEmptySlots() }}
+							<EmptyPaletteSlot {width} />
+						{/each}
+					{/if}
+				</div>
+			{/each}
+
+			{#each { length: Math.floor((paletteSize - palette.length) / rowWidth) }}
+				<div class="flex">
+					{#each { length: rowWidth }}
 						<EmptyPaletteSlot {width} />
 					{/each}
-				{/if}
-			</div>
-		{/each}
+				</div>
+			{/each}
+		</div>
 
-		{#each { length: Math.floor((paletteSize - palette.length) / rowWidth) }}
-			<div class="flex">
-				{#each { length: rowWidth }}
-					<EmptyPaletteSlot {width} />
-				{/each}
-			</div>
-		{/each}
-
-		<span>Palette length: {palette!.length}</span>
+		<span class="text-xs text-foreground/70">Palette length: {palette!.length}</span>
 	</Card.Content>
 
 	<Card.Footer class="grid grid-cols-3 gap-2">

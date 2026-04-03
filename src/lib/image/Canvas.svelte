@@ -194,7 +194,7 @@
 		<!-- top row -->
 		<div class="flex w-full items-center gap-2">
 			<!-- dimensions display -->
-			<span>Dimensions: {pixels!.length} x {pixels![0].length}</span>
+			<span class="text-foreground/70">Dimensions: {pixels!.length} x {pixels![0].length}</span>
 
 			<!-- download button -->
 			<Tooltip.Provider>
@@ -228,7 +228,7 @@
         -->
 
 		<!-- mute factor -->
-		<div class="flex items-center gap-2">
+		<div class="flex items-center gap-2 text-foreground/70">
 			<span>Mute Factor:</span>
 			<Input type="range" bind:value={muteFactor} min={0.001} max={0.1} step={0.001} />
 		</div>
