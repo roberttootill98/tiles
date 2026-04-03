@@ -175,7 +175,6 @@
 
 	<Card.Content>
 		<canvas bind:this={canvas} style="image-rendering: pixelated;"></canvas>
-		<!-- <canvas bind:this={canvas} {height} {width} style="image-rendering: pixelated;"></canvas> -->
 	</Card.Content>
 
 	<Card.Footer class="flex flex-col items-start gap-2 text-xs">
