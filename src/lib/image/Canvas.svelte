@@ -178,7 +178,7 @@
 		<!-- <canvas bind:this={canvas} {height} {width} style="image-rendering: pixelated;"></canvas> -->
 	</Card.Content>
 
-	<Card.Footer class="flex flex-col items-start gap-2">
+	<Card.Footer class="flex flex-col items-start gap-2 text-xs">
 		<span>Dimensions: {pixels!.length} x {pixels![0].length}</span>
 
 		<!-- #region controls -->
@@ -192,7 +192,7 @@
         -->
 
 		<!-- mute factor -->
-		<div class="flex items-center gap-2 text-xs">
+		<div class="flex items-center gap-2">
 			<span>Mute Factor:</span>
 			<Input type="range" bind:value={muteFactor} min={0.001} max={0.1} step={0.001} />
 		</div>
