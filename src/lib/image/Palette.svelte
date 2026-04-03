@@ -29,7 +29,7 @@
 	import Input from '$lib/components/ui/input/input.svelte';
 	import { kMeans } from '$lib/kMeans';
 	import * as Select from '$lib/components/ui/select/index.js';
-	import { distanceCombination } from '$lib/distanceCombination';
+	import { distanceCombination_threshold } from '$lib/distanceCombination';
 
 	let {
 		loadedImageType,
@@ -192,16 +192,21 @@
 
 					switch (combineMode_selected) {
 						case 'Basic Distance':
-							combinationResult = distanceCombination('basic', palette.slice(1), threshold);
+							combinationResult = distanceCombination_threshold(
+								'basic',
+								palette.slice(1),
+								threshold
+							);
 							break;
 						case 'Root Distance':
-							combinationResult = distanceCombination('basic', palette.slice(1), threshold);
+							combinationResult = distanceCombination_threshold(
+								'basic',
+								palette.slice(1),
+								threshold
+							);
 							break;
 						case 'KMeans':
-							combinationResult = kMeans(palette.slice(1), {
-								threshold,
-								maxIterations: 20
-							});
+							combinationResult = kMeans(palette.slice(1), 16);
 
 							break;
 						default:
@@ -220,16 +225,78 @@
 				icon: SquareArrowDown,
 				tooltip: 'Combine colours until within palette size',
 				onclick: (): void => {
-					// combine colours until within palette size
-					// include background colour by defualt
-					// reducedPalette = [palette[0]];
-					// colourMappings = [];
-					// const target_palette: Colour[] = [...palette];
-					// let threshold_reduceAll: number = 0;
-					// // while (target_palette.length > 0) {
-					// // 	threshold_reduceAll += 8;
-					// // 	target_palette
-					// // }
+					let combinationResult: CombinationResult;
+
+					switch (combineMode_selected) {
+						case 'Basic Distance':
+							var threshold_combination: number = 8;
+
+							combinationResult = distanceCombination_threshold(
+								'basic',
+								palette.slice(1),
+								threshold_combination
+							);
+
+							var colourMappings_ongoing: ColourMapping[] = combinationResult.colourMappings;
+
+							while (combinationResult.reducedPalette.length > paletteSize - 1) {
+								threshold_combination += 8;
+
+								combinationResult = distanceCombination_threshold(
+									'basic',
+									combinationResult.reducedPalette,
+									threshold_combination
+								);
+
+								//#region combine colour mappings
+								for (const colourMapping_new of combinationResult.colourMappings) {
+									// if not found, then this is a new colour mapping
+									let found: boolean = false;
+
+									// check if old mapping has been replaced
+									for (const [i, colourMapping_ongoing] of colourMappings_ongoing.entries()) {
+										if (
+											compareColours(colourMapping_new.original, colourMapping_ongoing.replaceWith)
+										) {
+											found = true;
+
+											// remove from ongoing colour mappings
+											colourMappings_ongoing.splice(i, 1);
+
+											break;
+										}
+									}
+
+									if (!found) {
+										colourMappings_ongoing.push(colourMapping_new);
+									}
+								}
+
+								//#endregion combine colour mappings
+							}
+
+							reducedPalette = [palette[0], ...combinationResult.reducedPalette];
+
+							combinationResult.colourMappings = colourMappings_ongoing;
+
+							break;
+						case 'Root Distance':
+							combinationResult = distanceCombination_threshold(
+								'basic',
+								palette.slice(1),
+								threshold
+							);
+							break;
+						case 'KMeans':
+							combinationResult = kMeans(palette.slice(1), 16);
+
+							break;
+						default:
+							throw new Error('unsupported combination mode!');
+					}
+
+					reducedPalette = [palette[0], ...combinationResult.reducedPalette];
+					colourMappings = combinationResult.colourMappings;
 				},
 				disabled: reducedPalette != undefined && colourMappings != undefined
 			});

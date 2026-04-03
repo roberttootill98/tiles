@@ -1,8 +1,13 @@
-import { get_colourDistance, type Colour, type CombinationResult } from './colour';
+import {
+	get_colourDistance,
+	type Colour,
+	type ColourMapping,
+	type CombinationResult
+} from './colour';
 
 export type CombinationMode = 'basic' | 'root';
 
-export function distanceCombination(
+export function distanceCombination_threshold(
 	combinationMode: CombinationMode,
 	palette: Colour[],
 	threshold: number
@@ -10,11 +15,11 @@ export function distanceCombination(
 	// combine colours within threshold
 
 	// include background colour by defualt
-	const reducedPalette = [palette[0]];
-	const colourMappings = [];
+	const reducedPalette: Colour[] = [];
+	const colourMappings: ColourMapping[] = [];
 
 	// slice 1 to ignore background
-	for (const colour of palette.slice(1)) {
+	for (const colour of palette) {
 		// check for similar colour within reduced colours
 		const colour_search = reducedPalette.slice(1).find((colour_search: Colour) => {
 			switch (combinationMode) {
