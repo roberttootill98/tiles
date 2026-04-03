@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { Colour, ColourMapping } from '$lib/colour';
-	import Canvas from './Canvas.svelte';
+	import Canvas from '../Canvas.svelte';
 	import type { LoadedImageType } from './loadedImage';
-	import Palette from './Palette.svelte';
+	import Palette from '../palette/Palette.svelte';
 
 	let {
 		loadedImageType,

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import ColourDisplay from './ColourDisplay.svelte';
+	import ColourDisplay from '../ColourDisplay.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import Button, { buttonVariants } from '$lib/components/ui/button/button.svelte';
 	import {
@@ -21,10 +21,10 @@
 		type ColourMapping,
 		type CombinationResult
 	} from '$lib/colour';
-	import { paletteSize } from '$lib/palette';
-	import type { LoadedImageType } from './loadedImage/loadedImage';
+	import { paletteSize } from '$lib/image/palette/palette';
+	import type { LoadedImageType } from '../loadedImage/loadedImage';
 	import { class_toolButton, downloadBlob } from '$lib/utils';
-	import EmptyPaletteSlot from './EmptyPaletteSlot.svelte';
+	import EmptyPaletteSlot from '../EmptyPaletteSlot.svelte';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import { kMeans } from '$lib/kMeans';
