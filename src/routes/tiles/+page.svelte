@@ -103,16 +103,6 @@
 
 	//#endregion reduced palette
 
-	// if there are tabs
-	const tabs: boolean = $derived.by(() => {
-		return (
-			// there are some split palettes
-			(splitPalettes != undefined && splitPalettes.length > 0) ||
-			// there is a reduced palette
-			reducedPalette != undefined
-		);
-	});
-
 	let tabValue: string = $state('original');
 
 	function onTabValueChange(tabValue_new: string): void {
@@ -140,153 +130,143 @@
 
 	{#if files != undefined}
 		{#if !imageLoading && imageLoaded}
-			{#if tabs}
-				<Tabs.Root value={tabValue} class="mx-2" onValueChange={onTabValueChange}>
-					<div class="flex gap-2">
-						<Tabs.List>
-							<Tabs.Trigger value="original" class={get_class_tabTrigger()}>Original</Tabs.Trigger>
+			<Tabs.Root value={tabValue} class="mx-2" onValueChange={onTabValueChange}>
+				<!-- forced min-height to stop it flickering a bit on ui change -->
+				<div class="flex min-h-10 items-center gap-2">
+					<Tabs.List>
+						<Tabs.Trigger value="original" class={get_class_tabTrigger()}>Original</Tabs.Trigger>
 
-							{#each splitPalettes as splitPalette, index (splitPalette)}
-								<Tabs.Trigger value="palette-{index}" class={get_class_tabTrigger()}>
-									{index}
-								</Tabs.Trigger>
-							{/each}
-
-							{#if reducedPalette != null}
-								<Tabs.Trigger value="reduced" class={get_class_tabTrigger()}>Reduced</Tabs.Trigger>
-							{/if}
-						</Tabs.List>
-
-						{#if splitPalettes != undefined && splitPalettes.length > 0}
-							<div class="flex items-center rounded-lg border text-xs">
-								<strong class="px-2">Split Palette</strong>
-
-								<!-- remove -->
-								<Button onclick={removeSplitPalette} variant="ghost" size="icon-sm">
-									<X />
-								</Button>
-							</div>
-						{/if}
+						{#each splitPalettes as splitPalette, index (splitPalette)}
+							<Tabs.Trigger value="palette-{index}" class={get_class_tabTrigger()}>
+								{index}
+							</Tabs.Trigger>
+						{/each}
 
 						{#if reducedPalette != null}
-							<div class="flex items-center rounded-lg border text-xs">
-								<strong class="px-2">Reduced Palette</strong>
-
-								<!-- view -->
-								<Dialog.Root>
-									<Dialog.Trigger
-										type="button"
-										class={buttonVariants({ variant: 'ghost', size: 'icon-sm' })}
-									>
-										<Eye />
-									</Dialog.Trigger>
-
-									<Dialog.Content class="w-fit max-w-none min-w-xl sm:max-w-fit">
-										<Dialog.Header>
-											<Dialog.Title>Reduced Palette</Dialog.Title>
-
-											<Dialog.Description>
-												Which colours have been mapped to which.
-											</Dialog.Description>
-										</Dialog.Header>
-
-										<ScrollArea>
-											<div class="mr-4 grid max-h-96 grid-cols-3 gap-1">
-												{#each colourMappings as colourMapping (colourMapping)}
-													<!-- was - rgb -->
-													<RGBDisplay colour={colourMapping.original} />
-
-													<div class="flex items-center justify-center gap-2">
-														<!-- was -->
-														<ColourDisplay colour={colourMapping.original} width={18} />
-
-														<!-- arrow -->
-														<ArrowRight />
-
-														<!-- replaced with -->
-														<ColourDisplay colour={colourMapping.replaceWith} width={18} />
-
-														<!-- swap colours -->
-														<Tooltip.Provider>
-															<Tooltip.Root>
-																<Tooltip.Trigger>
-																	<Button
-																		onclick={() => swapColourMapping(colourMapping)}
-																		variant="outline"
-																		size="icon"
-																		class="size-fit p-1"
-																	>
-																		<MoveHorizontal width={6} height={6} />
-																	</Button>
-																</Tooltip.Trigger>
-
-																<Tooltip.Content>
-																	<span>Swap colour mapping.</span>
-																</Tooltip.Content>
-															</Tooltip.Root>
-														</Tooltip.Provider>
-													</div>
-
-													<!-- replaced with - rgb -->
-													<RGBDisplay colour={colourMapping.replaceWith} />
-												{/each}
-											</div>
-										</ScrollArea>
-									</Dialog.Content>
-								</Dialog.Root>
-
-								<!-- remove -->
-								<Button onclick={removeReducedPalette} variant="ghost" size="icon-sm">
-									<X />
-								</Button>
-							</div>
+							<Tabs.Trigger value="reduced" class={get_class_tabTrigger()}>Reduced</Tabs.Trigger>
 						{/if}
-					</div>
+					</Tabs.List>
 
-					<Tabs.Content value="original">
-						<LoadedImage
-							loadedImageType="originalImage"
-							pixels={pixels!}
-							palette={palette!}
-							bind:splitPalettes
-							bind:reducedPalette
-							bind:colourMappings
-						/>
-					</Tabs.Content>
+					{#if splitPalettes != undefined && splitPalettes.length > 0}
+						<div class="flex items-center rounded-lg border text-xs">
+							<strong class="px-2">Split Palette</strong>
 
-					{#each splitPalettes as palette, index (palette)}
-						<Tabs.Content value="palette-{index}">
-							<LoadedImage
-								loadedImageType="paletteSplit"
-								pixels={pixels!}
-								palette={palette!}
-								{colourMappings}
-							/>
-						</Tabs.Content>
-					{/each}
+							<!-- remove -->
+							<Button onclick={removeSplitPalette} variant="ghost" size="icon-sm">
+								<X />
+							</Button>
+						</div>
+					{/if}
 
 					{#if reducedPalette != null}
-						<Tabs.Content value="reduced">
-							<LoadedImage
-								loadedImageType="reduced"
-								pixels={pixels!}
-								palette={reducedPalette!}
-								{colourMappings}
-								bind:splitPalettes
-							/>
-						</Tabs.Content>
+						<div class="flex items-center rounded-lg border text-xs">
+							<strong class="px-2">Reduced Palette</strong>
+
+							<!-- view -->
+							<Dialog.Root>
+								<Dialog.Trigger
+									type="button"
+									class={buttonVariants({ variant: 'ghost', size: 'icon-sm' })}
+								>
+									<Eye />
+								</Dialog.Trigger>
+
+								<Dialog.Content class="w-fit max-w-none min-w-xl sm:max-w-fit">
+									<Dialog.Header>
+										<Dialog.Title>Reduced Palette</Dialog.Title>
+
+										<Dialog.Description>
+											Which colours have been mapped to which.
+										</Dialog.Description>
+									</Dialog.Header>
+
+									<ScrollArea>
+										<div class="mr-4 grid max-h-96 grid-cols-3 gap-1">
+											{#each colourMappings as colourMapping (colourMapping)}
+												<!-- was - rgb -->
+												<RGBDisplay colour={colourMapping.original} />
+
+												<div class="flex items-center justify-center gap-2">
+													<!-- was -->
+													<ColourDisplay colour={colourMapping.original} width={18} />
+
+													<!-- arrow -->
+													<ArrowRight />
+
+													<!-- replaced with -->
+													<ColourDisplay colour={colourMapping.replaceWith} width={18} />
+
+													<!-- swap colours -->
+													<Tooltip.Provider>
+														<Tooltip.Root>
+															<Tooltip.Trigger>
+																<Button
+																	onclick={() => swapColourMapping(colourMapping)}
+																	variant="outline"
+																	size="icon"
+																	class="size-fit p-1"
+																>
+																	<MoveHorizontal width={6} height={6} />
+																</Button>
+															</Tooltip.Trigger>
+
+															<Tooltip.Content>
+																<span>Swap colour mapping.</span>
+															</Tooltip.Content>
+														</Tooltip.Root>
+													</Tooltip.Provider>
+												</div>
+
+												<!-- replaced with - rgb -->
+												<RGBDisplay colour={colourMapping.replaceWith} />
+											{/each}
+										</div>
+									</ScrollArea>
+								</Dialog.Content>
+							</Dialog.Root>
+
+							<!-- remove -->
+							<Button onclick={removeReducedPalette} variant="ghost" size="icon-sm">
+								<X />
+							</Button>
+						</div>
 					{/if}
-				</Tabs.Root>
-			{:else}
-				<LoadedImage
-					loadedImageType="originalImage"
-					pixels={pixels!}
-					palette={palette!}
-					bind:splitPalettes
-					bind:reducedPalette
-					bind:colourMappings
-				/>
-			{/if}
+				</div>
+
+				<Tabs.Content value="original">
+					<LoadedImage
+						loadedImageType="originalImage"
+						pixels={pixels!}
+						palette={palette!}
+						bind:splitPalettes
+						bind:reducedPalette
+						bind:colourMappings
+					/>
+				</Tabs.Content>
+
+				{#each splitPalettes as palette, index (palette)}
+					<Tabs.Content value="palette-{index}">
+						<LoadedImage
+							loadedImageType="paletteSplit"
+							pixels={pixels!}
+							palette={palette!}
+							{colourMappings}
+						/>
+					</Tabs.Content>
+				{/each}
+
+				{#if reducedPalette != null}
+					<Tabs.Content value="reduced">
+						<LoadedImage
+							loadedImageType="reduced"
+							pixels={pixels!}
+							palette={reducedPalette!}
+							{colourMappings}
+							bind:splitPalettes
+						/>
+					</Tabs.Content>
+				{/if}
+			</Tabs.Root>
 		{:else if imageLoading}
 			<LoaderCircle class="animate-spin" />
 		{/if}

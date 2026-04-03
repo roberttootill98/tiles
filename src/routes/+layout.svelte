@@ -15,7 +15,7 @@
 		<Info />
 	</header>
 
-	<main class="flex h-full flex-col items-center">
+	<main class="flex h-full flex-col">
 		{@render children()}
 	</main>
 </div>
