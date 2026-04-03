@@ -226,51 +226,28 @@
 				tooltip: 'Combine colours until within palette size',
 				onclick: (): void => {
 					let combinationResult: CombinationResult;
+					let threshold_combination: number = 8;
+					let colourMappings_ongoing: ColourMapping[];
 
 					switch (combineMode_selected) {
 						case 'Basic Distance':
-							var threshold_combination: number = 8;
-
 							combinationResult = distanceCombination_threshold(
 								'basic',
 								palette.slice(1),
 								threshold_combination
 							);
 
-							var colourMappings_ongoing: ColourMapping[] = combinationResult.colourMappings;
+							colourMappings_ongoing = combinationResult.colourMappings;
 
 							while (combinationResult.reducedPalette.length > paletteSize - 1) {
-								threshold_combination += 8;
+								threshold_combination++;
 
 								combinationResult = distanceCombination_threshold(
 									'basic',
 									combinationResult.reducedPalette,
-									threshold_combination
+									threshold_combination,
+									combinationResult.colourMappings
 								);
-
-								//#region combine colour mappings
-								for (const colourMapping_new of combinationResult.colourMappings) {
-									// if not found, then this is a new colour mapping
-									let found: boolean = false;
-
-									// check if old mapping has been replaced
-									for (const [i, colourMapping_ongoing] of colourMappings_ongoing.entries()) {
-										if (
-											compareColours(colourMapping_new.original, colourMapping_ongoing.replaceWith)
-										) {
-											found = true;
-
-											// remove from ongoing colour mappings
-											colourMappings_ongoing.splice(i, 1);
-
-											break;
-										}
-									}
-
-									if (!found) {
-										colourMappings_ongoing.push(colourMapping_new);
-									}
-								}
 
 								//#endregion combine colour mappings
 							}
@@ -280,10 +257,28 @@
 							break;
 						case 'Root Distance':
 							combinationResult = distanceCombination_threshold(
-								'basic',
+								'root',
 								palette.slice(1),
-								threshold
+								threshold_combination
 							);
+
+							colourMappings_ongoing = combinationResult.colourMappings;
+
+							while (combinationResult.reducedPalette.length > paletteSize - 1) {
+								threshold_combination++;
+
+								combinationResult = distanceCombination_threshold(
+									'root',
+									combinationResult.reducedPalette,
+									threshold_combination,
+									combinationResult.colourMappings
+								);
+
+								//#endregion combine colour mappings
+							}
+
+							combinationResult.colourMappings = colourMappings_ongoing;
+
 							break;
 						case 'KMeans':
 							combinationResult = kMeans(palette.slice(1), 16);
