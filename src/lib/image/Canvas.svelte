@@ -192,7 +192,7 @@
         -->
 
 		<!-- mute factor -->
-		<div class="flex items-center gap-2">
+		<div class="flex items-center gap-2 text-xs">
 			<span>Mute Factor:</span>
 			<Input type="range" bind:value={muteFactor} min={0.001} max={0.1} step={0.001} />
 		</div>
