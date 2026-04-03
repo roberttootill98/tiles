@@ -1,31 +1,31 @@
 <script lang="ts">
-	import { Moon, Sun } from "lucide-svelte";
-	import Button from "./ui/button/button.svelte";
-	import { onMount } from "svelte";
+	import { Moon, Sun } from 'lucide-svelte';
+	import Button from './ui/button/button.svelte';
+	import { onMount } from 'svelte';
 
-    onMount(() => {
-        document.documentElement.classList.add('dark');
-    });
-    
-    let dark: boolean = $state(true);
+	onMount(() => {
+		document.documentElement.classList.add('dark');
+	});
 
-    function toggleDark(): void {
-        dark = !dark;
+	let dark: boolean = $state(true);
 
-        if (dark) {
-            document.documentElement.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
-        }
-    }
+	function toggleDark(): void {
+		dark = !dark;
+
+		if (dark) {
+			document.documentElement.classList.add('dark');
+			localStorage.setItem('theme', 'dark');
+		} else {
+			document.documentElement.classList.remove('dark');
+			localStorage.setItem('theme', 'light');
+		}
+	}
 </script>
 
-<Button onclick={toggleDark}>
-    {#if dark}
-        <Sun/>
-    {:else}
-        <Moon/>
-    {/if}
+<Button onclick={toggleDark} size="icon">
+	{#if dark}
+		<Sun />
+	{:else}
+		<Moon />
+	{/if}
 </Button>
