@@ -17,7 +17,10 @@
 	];
 
 	const features_future: string[] = [
-		'De-duplicate tileset, compare all 8x8 tiles and remove duplicates (will require tileset image alignment).'
+		'De-duplicate tileset, compare all 8x8 tiles and remove duplicates (will require tileset image alignment).',
+		'Better colour combination (kMeans).',
+		'Palette zooming and scale.',
+		'Manual colour replacement.'
 	];
 </script>
 
