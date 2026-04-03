@@ -23,7 +23,7 @@
 	} from '$lib/colour';
 	import { paletteSize } from '$lib/palette';
 	import type { LoadedImageType } from './loadedImage';
-	import { downloadBlob } from '$lib/utils';
+	import { class_toolButton, downloadBlob } from '$lib/utils';
 	import EmptyPaletteSlot from './EmptyPaletteSlot.svelte';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import Input from '$lib/components/ui/input/input.svelte';
@@ -119,8 +119,6 @@
 		toggle_bind?: boolean;
 		//#endregion toggle
 	};
-
-	const class_toolButton: string = 'bg-transparent! px-2! hover:bg-muted!';
 
 	// threshold as multiple of 8, since colours are actually rounded to closest 8 anyway
 	let threshold: number = $state(8 * 2);

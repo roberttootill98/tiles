@@ -1,17 +1,22 @@
 <script lang="ts">
 	import { compareColours, type Colour, type ColourMapping } from '$lib/colour';
+	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import Input from '$lib/components/ui/input/input.svelte';
+	import { Download } from 'lucide-svelte';
+	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
+	import { class_toolButton, downloadBlob } from '$lib/utils';
+	import UPNG from 'upng-js';
 
 	let {
 		pixels,
-		filterBy,
 		palette,
+		filterBy,
 		colourMappings
 	}: {
 		pixels: Colour[][];
+		palette: Colour[];
 		filterBy?: Colour;
-		palette?: Colour[];
 		colourMappings?: ColourMapping[];
 	} = $props();
 
@@ -115,8 +120,10 @@
 		}
 	});
 
+	let pixels_render: Uint8ClampedArray<ArrayBuffer>;
+
 	function setCanvas(): void {
-		const pixels_render = new Uint8ClampedArray(width * height * pixelWidth);
+		pixels_render = new Uint8ClampedArray(width * height * pixelWidth);
 
 		let pixel_render_index: number = 0;
 
@@ -164,6 +171,12 @@
 		ctx.putImageData(new ImageData(pixels_render, width, height), 0, 0);
 	}
 
+	function downloadAsIndexedPng(): void {
+		const pngData = UPNG.encode([pixels_render.buffer], width, height, palette!.length);
+
+		downloadBlob(new Blob([pngData], { type: 'image/png' }));
+	}
+
 	let scaleFactor: number = $state(1);
 	let muteFactor: number = $state(0.1);
 </script>
@@ -178,7 +191,31 @@
 	</Card.Content>
 
 	<Card.Footer class="flex flex-col items-start gap-2 text-xs">
-		<span>Dimensions: {pixels!.length} x {pixels![0].length}</span>
+		<!-- top row -->
+		<div class="flex w-full items-center gap-2">
+			<!-- dimensions display -->
+			<span>Dimensions: {pixels!.length} x {pixels![0].length}</span>
+
+			<!-- download button -->
+			<Tooltip.Provider>
+				<Tooltip.Root>
+					<Tooltip.Trigger class="ml-auto">
+						<Button
+							size="sm"
+							variant="outline"
+							class={class_toolButton}
+							onclick={downloadAsIndexedPng}
+						>
+							<Download />
+						</Button>
+					</Tooltip.Trigger>
+
+					<Tooltip.Content>
+						<p>Download as indexed .png file</p>
+					</Tooltip.Content>
+				</Tooltip.Root>
+			</Tooltip.Provider>
+		</div>
 
 		<!-- #region controls -->
 

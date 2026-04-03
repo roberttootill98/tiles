@@ -26,7 +26,7 @@
 <div class="flex gap-2">
 	{#if loadedImageType == 'originalImage'}
 		<!-- interactive image -->
-		<Canvas pixels={pixels!} filterBy={paletteColourSelected} />
+		<Canvas pixels={pixels!} filterBy={paletteColourSelected} {palette} />
 
 		<!-- palette -->
 		<Palette

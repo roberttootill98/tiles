@@ -25,6 +25,7 @@
 		"@tailwindcss/typography": "^0.5.19",
 		"@tailwindcss/vite": "^4.1.18",
 		"@types/node": "^24",
+		"@types/upng-js": "^2.1.5",
 		"bits-ui": "^2.16.3",
 		"clsx": "^2.1.1",
 		"eslint": "^9.39.2",
@@ -46,6 +47,7 @@
 	},
 	"dependencies": {
 		"lucide-svelte": "^0.577.0",
-		"ml-kmeans": "^7.0.0"
+		"ml-kmeans": "^7.0.0",
+		"upng-js": "^2.1.0"
 	}
 }
