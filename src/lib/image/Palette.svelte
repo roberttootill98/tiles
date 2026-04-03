@@ -125,7 +125,8 @@
 
 	//#region combine mode selection
 
-	const combineModes: string[] = ['Basic Distance', 'Root Distance', 'KMeans'];
+	const combineModes: string[] = ['Basic Distance', 'Root Distance'];
+	// const combineModes: string[] = ['Basic Distance', 'Root Distance', 'KMeans'];
 
 	let combineMode_selected: string = $state(combineModes[0]);
 
