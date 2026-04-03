@@ -22,7 +22,7 @@
 		type CombinationResult
 	} from '$lib/colour';
 	import { paletteSize } from '$lib/palette';
-	import type { LoadedImageType } from './loadedImage';
+	import type { LoadedImageType } from './loadedImage/loadedImage';
 	import { class_toolButton, downloadBlob } from '$lib/utils';
 	import EmptyPaletteSlot from './EmptyPaletteSlot.svelte';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';

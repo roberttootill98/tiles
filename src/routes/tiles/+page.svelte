@@ -6,7 +6,7 @@
 	import type { Colour, ColourMapping } from '$lib/colour';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
-	import LoadedImage from '$lib/image/LoadedImage.svelte';
+	import LoadedImage from '$lib/image/loadedImage/LoadedImage.svelte';
 	import ColourDisplay from '$lib/image/ColourDisplay.svelte';
 	import RGBDisplay from '$lib/image/RGBDisplay.svelte';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
