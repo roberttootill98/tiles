@@ -3,7 +3,7 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import Input from '$lib/components/ui/input/input.svelte';
-	import { Download, Grid2X2 } from 'lucide-svelte';
+	import { Download, Grid2X2, MoveDown, MoveLeft, MoveRight, MoveUp } from 'lucide-svelte';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import { class_toolButton, downloadBlob } from '$lib/utils';
 	import UPNG from 'upng-js';
@@ -197,6 +197,27 @@
 	let showGrid: boolean = $state(false);
 	let scaleFactor: number = $state(1);
 	let muteFactor: number = $state(0.1);
+
+	//#region canvas alignment
+	const class_moveButton: string = [
+		'cursor-pointer',
+		'border',
+		'px-1',
+		'py-1',
+		'hover:bg-muted'
+	].join(' ');
+
+	const size_moveButton: number = 16;
+
+	function moveLeft(): void {}
+
+	function moveUp(): void {}
+
+	function moveDown(): void {}
+
+	function moveRight(): void {}
+
+	//#endregion canvas alignment
 </script>
 
 <Card.Root class="gap-2">
@@ -215,7 +236,28 @@
 			<span class="text-foreground/70">Dimensions: {pixels!.length} x {pixels![0].length}</span>
 
 			<!-- right aligned items -->
-			<div class="ml-auto">
+			<div class="ml-auto flex items-center gap-2">
+				<!-- align canvas -->
+				<div class="flex items-center">
+					<button onclick={moveLeft} class={`${class_moveButton} rounded-l-lg`}>
+						<MoveLeft size={size_moveButton} />
+					</button>
+
+					<div class="flex flex-col">
+						<button onclick={moveUp} class={`${class_moveButton} rounded-t-lg`}>
+							<MoveUp size={size_moveButton} />
+						</button>
+
+						<button onclick={moveDown} class={`${class_moveButton} rounded-b-lg`}>
+							<MoveDown size={size_moveButton} />
+						</button>
+					</div>
+
+					<button onclick={moveRight} class={`${class_moveButton} rounded-r-lg`}>
+						<MoveRight size={size_moveButton} />
+					</button>
+				</div>
+
 				<!-- show grid -->
 				<Tooltip.Provider>
 					<Tooltip.Root>
