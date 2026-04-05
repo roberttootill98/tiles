@@ -231,6 +231,21 @@
 
 	function moveRight(): void {}
 
+	//#region hold
+	let moveButton_hold_interval: NodeJS.Timeout | null = null;
+
+	function move_holdStart(func: () => void): void {
+		moveButton_hold_interval = setInterval(func, 1);
+	}
+
+	function move_holdEnd(): void {
+		if (moveButton_hold_interval != null) {
+			clearInterval(moveButton_hold_interval);
+		}
+	}
+
+	//#endregion hold
+
 	//#endregion canvas alignment
 </script>
 
@@ -253,7 +268,12 @@
 			<div class="ml-auto flex items-center gap-2">
 				<!-- align canvas -->
 				<div class="flex items-center">
-					<button onclick={moveLeft} class={`${class_moveButton} rounded-l-lg`}>
+					<button
+						onclick={moveLeft}
+						onmousedown={() => move_holdStart(moveLeft)}
+						onmouseup={move_holdEnd}
+						class={`${class_moveButton} rounded-l-lg`}
+					>
 						<MoveLeft size={size_moveButton} />
 					</button>
 
