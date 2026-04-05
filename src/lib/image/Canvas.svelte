@@ -11,7 +11,7 @@
 	import { tileSize } from './image';
 
 	let {
-		pixels,
+		pixels = $bindable(),
 		palette,
 		filterBy,
 		colourMappings
@@ -199,6 +199,8 @@
 	let muteFactor: number = $state(0.1);
 
 	//#region canvas alignment
+	// update input pixels array
+
 	const class_moveButton: string = [
 		'cursor-pointer',
 		'border',
@@ -209,7 +211,19 @@
 
 	const size_moveButton: number = 16;
 
-	function moveLeft(): void {}
+	function moveLeft(): void {
+		for (let row = 0; row < pixels.length; row++) {
+			const firstPixel: Colour = pixels[row][0];
+
+			for (let column = 0; column < pixels[row].length; column++) {
+				if (column == pixels[row].length - 1) {
+					pixels[row][column] = firstPixel;
+				} else {
+					pixels[row][column] = pixels[row][column + 1];
+				}
+			}
+		}
+	}
 
 	function moveUp(): void {}
 

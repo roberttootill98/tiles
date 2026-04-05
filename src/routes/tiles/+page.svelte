@@ -236,7 +236,7 @@
 				<Tabs.Content value="original">
 					<LoadedImage
 						loadedImageType="originalImage"
-						pixels={pixels!}
+						bind:pixels={pixels!}
 						palette={palette!}
 						bind:splitPalettes
 						bind:reducedPalette
