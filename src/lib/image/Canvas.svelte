@@ -3,10 +3,12 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import Input from '$lib/components/ui/input/input.svelte';
-	import { Download } from 'lucide-svelte';
+	import { Download, Grid2X2 } from 'lucide-svelte';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import { class_toolButton, downloadBlob } from '$lib/utils';
 	import UPNG from 'upng-js';
+	import { Toggle } from '$lib/components/ui/toggle';
+	import { tileSize } from './image';
 
 	let {
 		pixels,
@@ -115,7 +117,7 @@
 	const pixelWidth: number = 4;
 
 	$effect(() => {
-		if (pixels && scaleFactor) {
+		if (pixels && scaleFactor && (showGrid || !showGrid)) {
 			setCanvas();
 		}
 	});
@@ -129,6 +131,18 @@
 
 		for (let y = 0; y < pixels.length; y++) {
 			for (let x = 0; x < pixels[y].length; x++) {
+				if (showGrid && (x % tileSize == 0 || y % tileSize == 0)) {
+					// grid square
+					pixels_render[pixel_render_index] = 0;
+					pixels_render[pixel_render_index + 1] = 0;
+					pixels_render[pixel_render_index + 2] = 0;
+					pixels_render[pixel_render_index + 3] = 255;
+
+					pixel_render_index += 4;
+
+					continue;
+				}
+
 				const colour: Colour = pixels[y][x];
 
 				let colourValues: number[] = [colour.red, colour.green, colour.blue, 255];
@@ -158,6 +172,9 @@
 			}
 		}
 
+		// grid
+		// for(i in range)
+
 		// scale
 		canvas.width = Math.floor(width * scaleFactor);
 		canvas.height = Math.floor(height * scaleFactor);
@@ -177,6 +194,7 @@
 		downloadBlob(new Blob([pngData], { type: 'image/png' }));
 	}
 
+	let showGrid: boolean = $state(false);
 	let scaleFactor: number = $state(1);
 	let muteFactor: number = $state(0.1);
 </script>
@@ -196,25 +214,50 @@
 			<!-- dimensions display -->
 			<span class="text-foreground/70">Dimensions: {pixels!.length} x {pixels![0].length}</span>
 
-			<!-- download button -->
-			<Tooltip.Provider>
-				<Tooltip.Root>
-					<Tooltip.Trigger class="ml-auto">
-						<Button
-							size="sm"
-							variant="outline"
-							class={class_toolButton}
-							onclick={downloadAsIndexedPng}
-						>
-							<Download />
-						</Button>
-					</Tooltip.Trigger>
+			<!-- right aligned items -->
+			<div class="ml-auto">
+				<!-- show grid -->
+				<Tooltip.Provider>
+					<Tooltip.Root>
+						<Tooltip.Trigger>
+							<Toggle
+								onclick={() => (showGrid = !showGrid)}
+								variant="outline"
+								class="
+									cursor-pointer
+									{showGrid ? 'bg-green-600 dark:bg-green-800' : ''}
+								"
+							>
+								<Grid2X2 />
+							</Toggle>
+						</Tooltip.Trigger>
 
-					<Tooltip.Content>
-						<p>Download as indexed .png file</p>
-					</Tooltip.Content>
-				</Tooltip.Root>
-			</Tooltip.Provider>
+						<Tooltip.Content>
+							<p>Show grid</p>
+						</Tooltip.Content>
+					</Tooltip.Root>
+				</Tooltip.Provider>
+
+				<!-- download button -->
+				<Tooltip.Provider>
+					<Tooltip.Root>
+						<Tooltip.Trigger>
+							<Button
+								size="sm"
+								variant="outline"
+								class={class_toolButton}
+								onclick={downloadAsIndexedPng}
+							>
+								<Download />
+							</Button>
+						</Tooltip.Trigger>
+
+						<Tooltip.Content>
+							<p>Download as indexed .png file</p>
+						</Tooltip.Content>
+					</Tooltip.Root>
+				</Tooltip.Provider>
+			</div>
 		</div>
 
 		<!-- #region controls -->
