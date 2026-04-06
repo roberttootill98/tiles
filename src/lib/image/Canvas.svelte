@@ -225,11 +225,43 @@
 		}
 	}
 
-	function moveUp(): void {}
+	function moveUp(): void {
+		const firstRow: Colour[] = pixels[0];
 
-	function moveDown(): void {}
+		for (let row = 0; row < pixels.length; row++) {
+			if (row == pixels.length - 1) {
+				pixels[row] = firstRow;
+			} else {
+				pixels[row] = pixels[row + 1];
+			}
+		}
+	}
 
-	function moveRight(): void {}
+	function moveDown(): void {
+		const lastRow: Colour[] = pixels[pixels.length - 1];
+
+		for (let row = pixels.length - 1; row >= 0; row--) {
+			if (row == 0) {
+				pixels[row] = lastRow;
+			} else {
+				pixels[row] = pixels[row - 1];
+			}
+		}
+	}
+
+	function moveRight(): void {
+		for (let row = 0; row < pixels.length; row++) {
+			const lastPixel: Colour = pixels[row][pixels[row].length - 1];
+
+			for (let column = pixels[row].length - 1; column >= 0; column--) {
+				if (column == 0) {
+					pixels[row][column] = lastPixel;
+				} else {
+					pixels[row][column] = pixels[row][column - 1];
+				}
+			}
+		}
+	}
 
 	//#region hold
 	let moveButton_hold_interval: NodeJS.Timeout | null = null;
@@ -269,7 +301,6 @@
 				<!-- align canvas -->
 				<div class="flex items-center">
 					<button
-						onclick={moveLeft}
 						onmousedown={() => move_holdStart(moveLeft)}
 						onmouseup={move_holdEnd}
 						class={`${class_moveButton} rounded-l-lg`}
@@ -278,16 +309,28 @@
 					</button>
 
 					<div class="flex flex-col">
-						<button onclick={moveUp} class={`${class_moveButton} rounded-t-lg`}>
+						<button
+							onmousedown={() => move_holdStart(moveUp)}
+							onmouseup={move_holdEnd}
+							class={`${class_moveButton} rounded-t-lg`}
+						>
 							<MoveUp size={size_moveButton} />
 						</button>
 
-						<button onclick={moveDown} class={`${class_moveButton} rounded-b-lg`}>
+						<button
+							onmousedown={() => move_holdStart(moveDown)}
+							onmouseup={move_holdEnd}
+							class={`${class_moveButton} rounded-b-lg`}
+						>
 							<MoveDown size={size_moveButton} />
 						</button>
 					</div>
 
-					<button onclick={moveRight} class={`${class_moveButton} rounded-r-lg`}>
+					<button
+						onmousedown={() => move_holdStart(moveRight)}
+						onmouseup={move_holdEnd}
+						class={`${class_moveButton} rounded-r-lg`}
+					>
 						<MoveRight size={size_moveButton} />
 					</button>
 				</div>
