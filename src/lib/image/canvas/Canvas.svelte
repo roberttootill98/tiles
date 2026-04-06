@@ -9,6 +9,7 @@
 	import UPNG from 'upng-js';
 	import { Toggle } from '$lib/components/ui/toggle';
 	import { tileSize } from '../image';
+	import Tiles from './tiles/Tiles.svelte';
 
 	let {
 		pixels = $bindable(),
@@ -281,6 +282,7 @@
 	//#endregion canvas alignment
 </script>
 
+<!-- canvas card -->
 <Card.Root class="gap-2">
 	<Card.Header>
 		<span class="font-bold">Image</span>
@@ -398,3 +400,6 @@
 		<!-- #endregion controls -->
 	</Card.Footer>
 </Card.Root>
+
+<!-- tiles card -->
+<Tiles {pixels} />
