@@ -8,7 +8,7 @@
 	import { class_toolButton, downloadBlob } from '$lib/utils';
 	import UPNG from 'upng-js';
 	import { Toggle } from '$lib/components/ui/toggle';
-	import { tileSize } from './image';
+	import { tileSize } from '../image';
 
 	let {
 		pixels = $bindable(),

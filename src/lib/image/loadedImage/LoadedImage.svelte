@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Colour, ColourMapping } from '$lib/colour';
-	import Canvas from '../Canvas.svelte';
+	import Canvas from '../canvas/Canvas.svelte';
 	import type { LoadedImageType } from './loadedImage';
 	import Palette from '../palette/Palette.svelte';
 
