@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Colour } from '$lib/colour';
 	import * as Card from '$lib/components/ui/card/index.js';
+	import ColourDisplay from '$lib/image/ColourDisplay.svelte';
 	import { tileSize } from '$lib/image/image';
 	import { compareTiles } from './tiles';
 
@@ -57,6 +58,8 @@
 
 		return tiles_found;
 	});
+
+	const rowLength: number = 8;
 </script>
 
 <Card.Root class="gap-2">
@@ -66,9 +69,25 @@
 
 	<Card.Content>
 		<!-- render tiles -->
-		<div>
-			tile count: {tiles.length}
+		<div class="flex flex-col">
+			{#each { length: Math.ceil(tiles.length / rowLength) }, i}
+				<div class="flex">
+					{#each tiles.slice(i * rowLength, (i + 1) * rowLength) as tile (tile)}
+						<div class="flex flex-col">
+							{#each tile as row (row)}
+								<div class="flex">
+									{#each row as colour (colour)}
+										<ColourDisplay {colour} width={2} />
+									{/each}
+								</div>
+							{/each}
+						</div>
+					{/each}
+				</div>
+			{/each}
 		</div>
+
+		<span class="text-xs text-muted-foreground">Unique tiles: {tiles.length}</span>
 	</Card.Content>
 
 	<Card.Footer class="flex flex-col items-start gap-2 text-xs"></Card.Footer>
