@@ -1,14 +1,16 @@
 <script lang="ts">
-	import type { Colour } from '$lib/colour';
+	import { compareColours, type Colour } from '$lib/colour';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import ColourDisplay from '$lib/image/ColourDisplay.svelte';
 	import { tileSize } from '$lib/image/image';
 	import { compareTiles } from './tiles';
 
 	let {
-		pixels
+		pixels,
+		backgroundColour
 	}: {
 		pixels: Colour[][];
+		backgroundColour: Colour;
 	} = $props();
 
 	const tiles: Colour[][][] = $derived.by(() => {
@@ -18,6 +20,9 @@
 			for (let column = 0; column < pixels[row].length; column += tileSize) {
 				//#region get tile
 				const tile: Colour[][] = [];
+
+				// if we have found a colour that's not the background colour
+				let nonBackgroundColourFound: boolean = false;
 
 				for (let tileRowIndex = row; tileRowIndex < row + tileSize; tileRowIndex++) {
 					const tileRow: Colour[] = [];
@@ -33,11 +38,25 @@
 							break;
 						}
 
+						if (!compareColours(pixels[tileRowIndex][tileColumn], backgroundColour)) {
+							nonBackgroundColourFound = true;
+						}
+
 						tileRow.push(pixels[tileRowIndex][tileColumn]);
+					}
+
+					if (tileRow.length != tileSize) {
+						// row doesn't match metatile width, so extend
+						for (let i = 0; i < tileSize - tileRow.length; i++) {
+							tileRow.push(backgroundColour);
+						}
 					}
 
 					tile.push(tileRow);
 				}
+
+				// tile is all background colour, so skip
+				if (!nonBackgroundColourFound) continue;
 
 				//#endregion get tile
 
@@ -60,6 +79,10 @@
 	});
 
 	const rowLength: number = 8;
+
+	function onSelect(tile: Colour[][]): void {
+		console.log('selected tile:', tile);
+	}
 </script>
 
 <Card.Root class="gap-2">
@@ -73,15 +96,18 @@
 			{#each { length: Math.ceil(tiles.length / rowLength) }, i}
 				<div class="flex">
 					{#each tiles.slice(i * rowLength, (i + 1) * rowLength) as tile (tile)}
-						<div class="flex flex-col">
+						<button
+							onclick={() => onSelect(tile)}
+							class="flex flex-col border hover:border-red-500"
+						>
 							{#each tile as row (row)}
 								<div class="flex">
-									{#each row as colour (colour)}
-										<ColourDisplay {colour} width={2} />
+									{#each row as colour, i (i)}
+										<ColourDisplay {colour} width={2} onSelect={() => {}} />
 									{/each}
 								</div>
 							{/each}
-						</div>
+						</button>
 					{/each}
 				</div>
 			{/each}

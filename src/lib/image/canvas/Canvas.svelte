@@ -402,4 +402,4 @@
 </Card.Root>
 
 <!-- tiles card -->
-<Tiles {pixels} />
+<Tiles {pixels} backgroundColour={palette[0]} />
