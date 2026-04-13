@@ -1,5 +1,12 @@
 import { compareColours, type Colour } from '$lib/colour';
 
+export type HighlightedTile = {
+	x_start: number;
+	y_start: number;
+	x_mirror: boolean;
+	y_mirror: boolean;
+};
+
 export function compareTiles(tile1: Colour[][], tile2: Colour[][]): boolean {
 	if (tile1.length != tile2.length) return false;
 

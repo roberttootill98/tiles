@@ -10,6 +10,7 @@
 	import { Toggle } from '$lib/components/ui/toggle';
 	import { tileSize } from '../image';
 	import Tiles from './tiles/Tiles.svelte';
+	import type { HighlightedTile } from './tiles/tiles';
 
 	let {
 		pixels = $bindable(),
@@ -132,16 +133,44 @@
 
 		for (let y = 0; y < pixels.length; y++) {
 			for (let x = 0; x < pixels[y].length; x++) {
-				if (showGrid && (x % tileSize == 0 || y % tileSize == 0)) {
-					// grid square
-					pixels_render[pixel_render_index] = 0;
-					pixels_render[pixel_render_index + 1] = 0;
-					pixels_render[pixel_render_index + 2] = 0;
-					pixels_render[pixel_render_index + 3] = 255;
+				if (x % tileSize == 0 || y % tileSize == 0) {
+					if (highlightedTiles.length > 0) {
+						// find highlighted tile that matches
+						const highlightedTile: HighlightedTile | undefined = highlightedTiles.find(
+							(highlightedTile: HighlightedTile) => {
+								return (
+									(highlightedTile.x_start == Math.floor(x / tileSize) * tileSize &&
+										highlightedTile.y_start == Math.floor(y / tileSize) * tileSize) ||
+									(highlightedTile.x_start + tileSize == x &&
+										highlightedTile.y_start == Math.floor(y / tileSize) * tileSize) ||
+									(highlightedTile.x_start == Math.floor(x / tileSize) * tileSize &&
+										highlightedTile.y_start + tileSize == y)
+								);
+							}
+						);
 
-					pixel_render_index += 4;
+						if (highlightedTile != null) {
+							// red grid square
+							pixels_render[pixel_render_index] = 237;
+							pixels_render[pixel_render_index + 1] = 28;
+							pixels_render[pixel_render_index + 2] = 36;
+							pixels_render[pixel_render_index + 3] = 255;
 
-					continue;
+							pixel_render_index += 4;
+
+							continue;
+						}
+					} else if (showGrid) {
+						// grid square
+						pixels_render[pixel_render_index] = 0;
+						pixels_render[pixel_render_index + 1] = 0;
+						pixels_render[pixel_render_index + 2] = 0;
+						pixels_render[pixel_render_index + 3] = 255;
+
+						pixel_render_index += 4;
+
+						continue;
+					}
 				}
 
 				const colour: Colour = pixels[y][x];
@@ -280,6 +309,8 @@
 	//#endregion hold
 
 	//#endregion canvas alignment
+
+	let highlightedTiles: HighlightedTile[] = $state([]);
 </script>
 
 <!-- canvas card -->
@@ -402,4 +433,4 @@
 </Card.Root>
 
 <!-- tiles card -->
-<Tiles {pixels} backgroundColour={palette[0]} />
+<Tiles {pixels} backgroundColour={palette[0]} bind:highlightedTiles />

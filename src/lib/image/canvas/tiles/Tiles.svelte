@@ -3,18 +3,27 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import ColourDisplay from '$lib/image/ColourDisplay.svelte';
 	import { tileSize } from '$lib/image/image';
-	import { compareTiles } from './tiles';
+	import { compareTiles, type HighlightedTile } from './tiles';
 
 	let {
 		pixels,
-		backgroundColour
+		backgroundColour,
+		highlightedTiles = $bindable()
 	}: {
 		pixels: Colour[][];
 		backgroundColour: Colour;
+		highlightedTiles: HighlightedTile[];
 	} = $props();
 
-	const tiles: Colour[][][] = $derived.by(() => {
-		const tiles_found: Colour[][][] = [];
+	type Tile = {
+		// tile as 2d array of colours
+		tile: Colour[][];
+		// coordinates of tiles in original image that map to this one
+		originalTiles: HighlightedTile[];
+	};
+
+	const tiles: Tile[] = $derived.by(() => {
+		const tiles_found: Tile[] = [];
 
 		for (let row = 0; row < pixels.length; row += tileSize) {
 			for (let column = 0; column < pixels[row].length; column += tileSize) {
@@ -61,14 +70,25 @@
 				//#endregion get tile
 
 				//#region check if tile already found
-				const found: boolean =
-					tiles_found.find((tile_search: Colour[][]) => {
-						return compareTiles(tile, tile_search);
-					}) != null;
+				const tile_found: Tile | undefined = tiles_found.find((tile_search: Tile) => {
+					return compareTiles(tile, tile_search.tile);
+				});
 
-				if (!found) {
+				if (tile_found != null) {
+					// existing tile, new mapping
+				} else {
 					// new tile
-					tiles_found.push(tile);
+					tiles_found.push({
+						tile,
+						originalTiles: [
+							{
+								x_start: column,
+								y_start: row,
+								x_mirror: false,
+								y_mirror: false
+							}
+						]
+					});
 				}
 
 				//#endregion check if tile already found
@@ -80,9 +100,17 @@
 
 	const rowLength: number = 8;
 
-	function onSelect(tile: Colour[][]): void {
-		console.log('selected tile:', tile);
+	//#region hover tile
+	function onMouseEnter(tile: Tile): void {
+		// set highlighted tiles
+		highlightedTiles = tile.originalTiles;
 	}
+
+	function onMouseExit(): void {
+		highlightedTiles = [];
+	}
+
+	//#endregion hover tile
 </script>
 
 <Card.Root class="gap-2">
@@ -97,10 +125,11 @@
 				<div class="flex">
 					{#each tiles.slice(i * rowLength, (i + 1) * rowLength) as tile (tile)}
 						<button
-							onclick={() => onSelect(tile)}
+							onmouseenter={() => onMouseEnter(tile)}
+							onmouseleave={() => onMouseExit()}
 							class="flex flex-col border hover:border-red-500"
 						>
-							{#each tile as row (row)}
+							{#each tile.tile as row (row)}
 								<div class="flex">
 									{#each row as colour, i (i)}
 										<ColourDisplay {colour} width={2} onSelect={() => {}} />
