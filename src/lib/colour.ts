@@ -1,3 +1,7 @@
+// depth of colours
+// each colour is rounded to nearest 8 in game
+export const colourDepth: number = 8;
+
 export type Colour = {
 	red: number;
 	green: number;

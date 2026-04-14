@@ -1,91 +1,100 @@
-import type { Colour } from "$lib/colour";
+import { colourDepth, type Colour } from '$lib/colour';
 
 type ImageLoadData = {
-    pixels: Colour[][];
-    palette: Colour[];
+	pixels: Colour[][];
+	palette: Colour[];
 };
 
 class ImageManager {
-    public async loadImage(file: File): Promise<ImageLoadData> {
-        return await this.imageTo2DArray(file);
-    }
+	public async loadImage(file: File): Promise<ImageLoadData> {
+		return await this.imageTo2DArray(file);
+	}
 
-    //#region load image
+	//#region load image
 
-    private async imageTo2DArray(file: File): Promise<ImageLoadData> {
-        const img: HTMLImageElement = new Image();
+	private async imageTo2DArray(file: File): Promise<ImageLoadData> {
+		const img: HTMLImageElement = new Image();
 
-        const url: string = URL.createObjectURL(file);
-        img.src = url;
+		const url: string = URL.createObjectURL(file);
+		img.src = url;
 
-        await this.loadImageAsync(img);
+		await this.loadImageAsync(img);
 
-        const { pixels, palette } = this.readInHtmlImgElement(img);
-        
-        URL.revokeObjectURL(url);
-        
-        return { pixels, palette };
-    }
+		const { pixels, palette } = this.readInHtmlImgElement(img);
 
-    private loadImageAsync(img: HTMLImageElement): Promise<void> {
-        return new Promise((resolve, reject) => {
-            img.onload = () => resolve();
-            img.onerror = (err) => reject(err);
-        });
-    }
-    
-    private readInHtmlImgElement(img: HTMLImageElement): ImageLoadData {
-        const canvas = document.createElement("canvas");
-        canvas.width = img.width;
-        canvas.height = img.height;
-        const ctx = canvas.getContext("2d")!;
-        ctx.drawImage(img, 0, 0);
+		URL.revokeObjectURL(url);
 
-        const data = ctx.getImageData(0, 0, img.width, img.height).data;
+		return { pixels, palette };
+	}
 
-        const pixels: Colour[][] = [];
-        const palette: Colour[] = [];
+	private loadImageAsync(img: HTMLImageElement): Promise<void> {
+		return new Promise((resolve, reject) => {
+			img.onload = () => resolve();
+			img.onerror = (err) => reject(err);
+		});
+	}
 
-        for (let y = 0; y < img.height; y++) {
-            const row: Colour[] = [];
+	private readInHtmlImgElement(img: HTMLImageElement): ImageLoadData {
+		const canvas = document.createElement('canvas');
+		canvas.width = img.width;
+		canvas.height = img.height;
+		const ctx = canvas.getContext('2d')!;
+		ctx.drawImage(img, 0, 0);
 
-            for (let x = 0; x < img.width; x++) {
-                const idx = (y * img.width + x) * 4;
+		const data = ctx.getImageData(0, 0, img.width, img.height).data;
 
-                const colour = {
-                    red: data[idx],
-                    green: data[idx + 1],
-                    blue: data[idx + 2]
-                };
+		const pixels: Colour[][] = [];
+		const palette: Colour[] = [];
 
-                // add to pixels
-                row.push(colour);
+		for (let y = 0; y < img.height; y++) {
+			const row: Colour[] = [];
 
-                //#region check for new colour
-                const found: boolean = palette.find((colour_search: Colour) => {
-                    return (
-                        colour.red == colour_search.red &&
-                        colour.green == colour_search.green &&
-                        colour.blue == colour_search.blue
-                    );
-                }) != null;
-                
-                if(!found) {
-                    palette.push(colour);
-                }
+			for (let x = 0; x < img.width; x++) {
+				const idx = (y * img.width + x) * 4;
 
-                //#endregion check for new colour
-            }
+				const colour: Colour = {
+					red: data[idx],
+					green: data[idx + 1],
+					blue: data[idx + 2]
+				};
 
-            pixels.push(row);
-        }
+				// normalise colour
+				for (const key in colour) {
+					// typescript safety
+					const colour_rgb: keyof Colour = key as keyof Colour;
 
-        return { pixels, palette};
-    };
+					colour[colour_rgb] = Math.round(colour[colour_rgb] / colourDepth) * colourDepth;
+				}
 
-    //#endregion load image
+				// add to pixels
+				row.push(colour);
+
+				//#region check for new colour
+				const found: boolean =
+					palette.find((colour_search: Colour) => {
+						return (
+							colour.red == colour_search.red &&
+							colour.green == colour_search.green &&
+							colour.blue == colour_search.blue
+						);
+					}) != null;
+
+				if (!found) {
+					palette.push(colour);
+				}
+
+				//#endregion check for new colour
+			}
+
+			pixels.push(row);
+		}
+
+		return { pixels, palette };
+	}
+
+	//#endregion load image
 }
 
-const instance = new ImageManager;
+const instance = new ImageManager();
 
 export default instance;
