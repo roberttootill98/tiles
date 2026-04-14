@@ -3,6 +3,7 @@
 	import Canvas from '../canvas/Canvas.svelte';
 	import type { LoadedImageType } from './loadedImage';
 	import Palette from '../palette/Palette.svelte';
+	import type { Tile } from '../canvas/tiles/tiles';
 
 	let {
 		loadedImageType,
@@ -20,18 +21,20 @@
 		colourMappings?: ColourMapping[];
 	} = $props();
 
+	let tiles: Tile[] = $state([]);
+
 	let paletteColourSelected: Colour | undefined = $state(undefined);
 </script>
 
 <div class="flex gap-2">
 	{#if loadedImageType == 'originalImage'}
 		<!-- interactive image -->
-		<Canvas bind:pixels={pixels!} filterBy={paletteColourSelected} {palette} />
+		<Canvas bind:pixels={pixels!} bind:tiles filterBy={paletteColourSelected} {palette} />
 
 		<!-- palette -->
 		<Palette
 			{loadedImageType}
-			palette={palette!}
+			{palette}
 			width={18}
 			bind:selectedColour={paletteColourSelected}
 			bind:splitPalettes
@@ -40,18 +43,25 @@
 		/>
 	{:else if loadedImageType == 'paletteSplit'}
 		<!-- interactive image -->
-		<Canvas pixels={pixels!} filterBy={paletteColourSelected} {palette} {colourMappings} />
+		<Canvas
+			pixels={pixels!}
+			bind:tiles
+			filterBy={paletteColourSelected}
+			{palette}
+			{colourMappings}
+		/>
 
 		<!-- palette -->
-		<Palette
-			{loadedImageType}
-			palette={palette!}
-			width={18}
-			bind:selectedColour={paletteColourSelected}
-		/>
+		<Palette {loadedImageType} {palette} width={18} bind:selectedColour={paletteColourSelected} />
 	{:else if loadedImageType == 'reduced'}
 		<!-- interactive image -->
-		<Canvas pixels={pixels!} filterBy={paletteColourSelected} {palette} {colourMappings} />
+		<Canvas
+			pixels={pixels!}
+			bind:tiles
+			filterBy={paletteColourSelected}
+			{palette}
+			{colourMappings}
+		/>
 
 		<!-- palette -->
 		<Palette
