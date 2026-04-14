@@ -100,17 +100,30 @@
 
 	const rowLength: number = 8;
 
-	//#region hover tile
-	function onMouseEnter(tile: Tile): void {
-		// set highlighted tiles
-		highlightedTiles = tile.originalTiles;
+	//#region select tile
+	let selectedTileIndex: number | null = $state(null);
+
+	function onSelect(index: number, tile: Tile): void {
+		if (index == selectedTileIndex) {
+			// unselect event
+
+			// set selected tile index
+			selectedTileIndex = null;
+
+			// unset highlighted tiles
+			highlightedTiles = [];
+		} else {
+			// select event
+
+			// set selected tile index
+			selectedTileIndex = index;
+
+			// set highlighted tiles
+			highlightedTiles = tile.originalTiles;
+		}
 	}
 
-	function onMouseExit(): void {
-		highlightedTiles = [];
-	}
-
-	//#endregion hover tile
+	//#endregion select tile
 </script>
 
 <Card.Root class="gap-2">
@@ -125,9 +138,10 @@
 				<div class="flex">
 					{#each tiles.slice(i * rowLength, (i + 1) * rowLength) as tile (tile)}
 						<button
-							onmouseenter={() => onMouseEnter(tile)}
-							onmouseleave={() => onMouseExit()}
-							class="flex flex-col border hover:border-red-500"
+							onclick={() => onSelect(i, tile)}
+							class={`flex flex-col border hover:border-red-500
+								${selectedTileIndex == i ? 'border-red-500' : ''}
+							`}
 						>
 							{#each tile.tile as row (row)}
 								<div class="flex">
