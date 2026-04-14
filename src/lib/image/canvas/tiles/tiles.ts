@@ -1,5 +1,12 @@
 import { compareColours, type Colour } from '$lib/colour';
 
+export type Tile = {
+	// tile as 2d array of colours
+	tile: Colour[][];
+	// coordinates of tiles in original image that map to this one
+	originalTiles: HighlightedTile[];
+};
+
 export type HighlightedTile = {
 	x_start: number;
 	y_start: number;

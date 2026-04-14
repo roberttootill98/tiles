@@ -3,7 +3,7 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import ColourDisplay from '$lib/image/ColourDisplay.svelte';
 	import { tileSize } from '$lib/image/image';
-	import { compareTiles, type CompareTileResult, type HighlightedTile } from './tiles';
+	import { compareTiles, type CompareTileResult, type HighlightedTile, type Tile } from './tiles';
 
 	let {
 		pixels,
@@ -23,13 +23,6 @@
 			resetSelectedTile();
 		}
 	});
-
-	type Tile = {
-		// tile as 2d array of colours
-		tile: Colour[][];
-		// coordinates of tiles in original image that map to this one
-		originalTiles: HighlightedTile[];
-	};
 
 	const tiles: Tile[] = $derived.by(() => {
 		const tiles_found: Tile[] = [];
