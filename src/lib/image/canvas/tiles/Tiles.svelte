@@ -17,8 +17,6 @@
 
 	$effect(() => {
 		if (pixels) {
-			console.log('pixels changed!');
-
 			// pixels changed, reset highlighted tiles
 			resetSelectedTile();
 		}
