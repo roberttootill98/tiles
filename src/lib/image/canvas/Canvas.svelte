@@ -175,7 +175,7 @@
 
 				const colour: Colour = pixels[y][x];
 
-				let colourValues: number[] = [colour.red, colour.green, colour.blue, 255];
+				const colourValues: number[] = [colour.red, colour.green, colour.blue, 255];
 
 				for (const [i, colourValue] of colourValues.entries()) {
 					if (
@@ -201,9 +201,6 @@
 				pixel_render_index += colourValues.length;
 			}
 		}
-
-		// grid
-		// for(i in range)
 
 		// scale
 		canvas.width = Math.floor(width * scaleFactor);
