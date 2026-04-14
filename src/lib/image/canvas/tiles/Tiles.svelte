@@ -3,27 +3,37 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import ColourDisplay from '$lib/image/ColourDisplay.svelte';
 	import { tileSize } from '$lib/image/image';
+	import { onMount } from 'svelte';
 	import { compareTiles, type CompareTileResult, type HighlightedTile, type Tile } from './tiles';
 
 	let {
 		pixels,
 		backgroundColour,
+		tiles = $bindable(),
 		highlightedTiles = $bindable()
 	}: {
 		pixels: Colour[][];
 		backgroundColour: Colour;
+		tiles: Tile[];
 		highlightedTiles: HighlightedTile[];
 	} = $props();
 
+	onMount(() => {
+		setTiles();
+	});
+
 	$effect(() => {
 		if (pixels) {
+			// set tiles
+			setTiles();
+
 			// pixels changed, reset highlighted tiles
 			resetSelectedTile();
 		}
 	});
 
-	const tiles: Tile[] = $derived.by(() => {
-		const tiles_found: Tile[] = [];
+	function setTiles(): void {
+		const tiles: Tile[] = [];
 
 		for (let row = 0; row < pixels.length; row += tileSize) {
 			for (let column = 0; column < pixels[row].length; column += tileSize) {
@@ -75,7 +85,7 @@
 				let tile_found: Tile | null = null;
 				let compareTileResult: CompareTileResult | null = null;
 
-				for (const tile_search of tiles_found) {
+				for (const tile_search of tiles) {
 					const result = compareTiles(tile, tile_search.tile);
 
 					if (result.same) {
@@ -98,7 +108,7 @@
 					});
 				} else {
 					// new tile
-					tiles_found.push({
+					tiles.push({
 						tile,
 						originalTiles: [
 							{
@@ -114,9 +124,7 @@
 				//#endregion check if tile already found
 			}
 		}
-
-		return tiles_found;
-	});
+	}
 
 	const rowLength: number = 8;
 
