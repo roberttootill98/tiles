@@ -7,8 +7,20 @@ export type HighlightedTile = {
 	y_mirror: boolean;
 };
 
-export function compareTiles(tile1: Colour[][], tile2: Colour[][]): boolean {
-	if (tile1.length != tile2.length) return false;
+export type CompareTileResult = {
+	same: boolean;
+	x_flip: boolean;
+	y_flip: boolean;
+};
+
+export function compareTiles(tile1: Colour[][], tile2: Colour[][]): CompareTileResult {
+	if (tile1.length != tile2.length) {
+		return {
+			same: false,
+			x_flip: false,
+			y_flip: false
+		};
+	}
 
 	// generate flipped versions of tile 1
 	const tile1_flippedX: Colour[][] = flipInX(tile1);
@@ -27,7 +39,11 @@ export function compareTiles(tile1: Colour[][], tile2: Colour[][]): boolean {
 	// flip x and y
 	const compare_flippedXY = compare(tile1_flippedXY, tile2);
 
-	return compare_regular || compare_flippedX || compare_flippedY || compare_flippedXY;
+	return {
+		same: compare_regular || compare_flippedX || compare_flippedY || compare_flippedXY,
+		x_flip: compare_flippedX || compare_flippedXY,
+		y_flip: compare_flippedY || compare_flippedXY
+	};
 }
 
 function compare(tile1: Colour[][], tile2: Colour[][]): boolean {

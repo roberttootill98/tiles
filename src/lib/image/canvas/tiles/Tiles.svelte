@@ -3,7 +3,7 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import ColourDisplay from '$lib/image/ColourDisplay.svelte';
 	import { tileSize } from '$lib/image/image';
-	import { compareTiles, type HighlightedTile } from './tiles';
+	import { compareTiles, type CompareTileResult, type HighlightedTile } from './tiles';
 
 	let {
 		pixels,
@@ -14,6 +14,15 @@
 		backgroundColour: Colour;
 		highlightedTiles: HighlightedTile[];
 	} = $props();
+
+	$effect(() => {
+		if (pixels) {
+			console.log('pixels changed!');
+
+			// pixels changed, reset highlighted tiles
+			resetSelectedTile();
+		}
+	});
 
 	type Tile = {
 		// tile as 2d array of colours
@@ -70,12 +79,32 @@
 				//#endregion get tile
 
 				//#region check if tile already found
-				const tile_found: Tile | undefined = tiles_found.find((tile_search: Tile) => {
-					return compareTiles(tile, tile_search.tile);
-				});
+
+				//#region find tile
+				let tile_found: Tile | null = null;
+				let compareTileResult: CompareTileResult | null = null;
+
+				for (const tile_search of tiles_found) {
+					const result = compareTiles(tile, tile_search.tile);
+
+					if (result.same) {
+						tile_found = tile_search;
+						compareTileResult = result;
+
+						break;
+					}
+				}
+
+				//#endregion find tile
 
 				if (tile_found != null) {
 					// existing tile, new mapping
+					tile_found.originalTiles.push({
+						x_start: column,
+						y_start: row,
+						x_mirror: compareTileResult!.x_flip,
+						y_mirror: compareTileResult!.y_flip
+					});
 				} else {
 					// new tile
 					tiles_found.push({
@@ -101,14 +130,16 @@
 	const rowLength: number = 8;
 
 	//#region select tile
-	let selectedTileIndex: number | null = $state(null);
+	let selectedTileRow: number | null = $state(null);
+	let selectedTileColumn: number | null = $state(null);
 
-	function onSelect(index: number, tile: Tile): void {
-		if (index == selectedTileIndex) {
+	function onSelect(row: number, column: number, tile: Tile): void {
+		if (row == selectedTileRow && column == selectedTileColumn) {
 			// unselect event
 
 			// set selected tile index
-			selectedTileIndex = null;
+			selectedTileRow = null;
+			selectedTileColumn = null;
 
 			// unset highlighted tiles
 			highlightedTiles = [];
@@ -116,11 +147,19 @@
 			// select event
 
 			// set selected tile index
-			selectedTileIndex = index;
+			selectedTileRow = row;
+			selectedTileColumn = column;
 
 			// set highlighted tiles
 			highlightedTiles = tile.originalTiles;
 		}
+	}
+
+	function resetSelectedTile(): void {
+		selectedTileRow = null;
+		selectedTileColumn = null;
+
+		highlightedTiles = [];
 	}
 
 	//#endregion select tile
@@ -136,11 +175,11 @@
 		<div class="flex flex-col">
 			{#each { length: Math.ceil(tiles.length / rowLength) }, i}
 				<div class="flex">
-					{#each tiles.slice(i * rowLength, (i + 1) * rowLength) as tile (tile)}
+					{#each tiles.slice(i * rowLength, (i + 1) * rowLength) as tile, j (j)}
 						<button
-							onclick={() => onSelect(i, tile)}
+							onclick={() => onSelect(i, j, tile)}
 							class={`flex flex-col border hover:border-red-500
-								${selectedTileIndex == i ? 'border-red-500' : ''}
+								${selectedTileRow == i && selectedTileColumn == j ? 'border-red-500' : ''}
 							`}
 						>
 							{#each tile.tile as row (row)}
@@ -156,7 +195,24 @@
 			{/each}
 		</div>
 
-		<span class="text-xs text-muted-foreground">Unique tiles: {tiles.length}</span>
+		<div class="flex flex-col gap-1 text-xs text-muted-foreground">
+			<span>Unique tiles: {tiles.length}</span>
+
+			{#if highlightedTiles.length > 0}
+				<span>
+					<span>Tile used</span>
+					<strong>{highlightedTiles.length}</strong>
+
+					<span>
+						{#if highlightedTiles.length == 1}
+							time
+						{:else}
+							times
+						{/if}
+					</span>
+				</span>
+			{/if}
+		</div>
 	</Card.Content>
 
 	<Card.Footer class="flex flex-col items-start gap-2 text-xs"></Card.Footer>

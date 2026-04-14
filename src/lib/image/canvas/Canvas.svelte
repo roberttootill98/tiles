@@ -294,7 +294,12 @@
 	let moveButton_hold_interval: NodeJS.Timeout | null = null;
 
 	function move_holdStart(func: () => void): void {
-		moveButton_hold_interval = setInterval(func, 1);
+		moveButton_hold_interval = setInterval(() => {
+			func();
+
+			// reset pixels to force good svelte update
+			pixels = [...pixels];
+		}, 1);
 	}
 
 	function move_holdEnd(): void {
