@@ -10,15 +10,17 @@
 	import { Toggle } from '$lib/components/ui/toggle';
 	import { tileSize } from '../image';
 	import Tiles from './tiles/Tiles.svelte';
-	import type { HighlightedTile } from './tiles/tiles';
+	import type { HighlightedTile, Tile } from './tiles/tiles';
 
 	let {
 		pixels = $bindable(),
+		tiles = $bindable(),
 		palette,
 		filterBy,
 		colourMappings
 	}: {
 		pixels: Colour[][];
+		tiles: Tile[];
 		palette: Colour[];
 		filterBy?: Colour;
 		colourMappings?: ColourMapping[];
@@ -435,4 +437,4 @@
 </Card.Root>
 
 <!-- tiles card -->
-<Tiles {pixels} backgroundColour={palette[0]} bind:highlightedTiles />
+<Tiles {pixels} backgroundColour={palette[0]} bind:tiles bind:highlightedTiles />
