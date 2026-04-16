@@ -314,7 +314,10 @@
 
 	//#endregion canvas alignment
 
+	//#region tiles
+
 	let highlightedTiles: HighlightedTile[] = $state([]);
+	//#endregion tiles
 </script>
 
 <!-- canvas card -->
