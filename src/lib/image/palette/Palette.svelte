@@ -354,7 +354,7 @@
 
 					console.log(`built ${tilesheets.length} tilesheets!`);
 				},
-				disabled: splitPalettes != undefined
+				disabled: tilesheets != undefined
 			});
 
 			// split palette into groups of 16
