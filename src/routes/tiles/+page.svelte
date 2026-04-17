@@ -159,6 +159,17 @@
 						{/if}
 					</Tabs.List>
 
+					{#if tilesheets != undefined && tilesheets.length > 0}
+						<div class="flex items-center rounded-lg border text-xs">
+							<strong class="px-2">Tilesheets</strong>
+
+							<!-- remove -->
+							<Button onclick={(): void => (tilesheets = undefined)} variant="ghost" size="icon-sm">
+								<X />
+							</Button>
+						</div>
+					{/if}
+
 					{#if splitPalettes != undefined && splitPalettes.length > 0}
 						<div class="flex items-center rounded-lg border text-xs">
 							<strong class="px-2">Split Palette</strong>
