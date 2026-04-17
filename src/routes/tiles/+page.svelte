@@ -11,6 +11,8 @@
 	import RGBDisplay from '$lib/image/RGBDisplay.svelte';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
+	import type Tilesheet from '$lib/tile/tilesheet/Tilesheet';
+	import type { Palette } from '$lib/image/palette/palette';
 
 	//#region file input
 	let file: File | undefined = $state(undefined);
@@ -59,10 +61,14 @@
 	//#region image loaded
 	let imageLoaded: boolean = $state(false);
 	let pixels: Colour[][] | null = $state(null);
-	let palette: Colour[] | null = $state(null);
+	let palette: Palette | null = $state(null);
+
+	//#region tilesheets
+	let tilesheets: Tilesheet[] | undefined = $state(undefined);
+	//#endregion tilesheets
 
 	//#region split palette
-	let splitPalettes: Colour[][] | undefined = $state(undefined);
+	let splitPalettes: Palette[] | undefined = $state(undefined);
 
 	function removeSplitPalette(): void {
 		// move back to first tab
@@ -135,6 +141,12 @@
 				<div class="flex min-h-10 items-center gap-2">
 					<Tabs.List>
 						<Tabs.Trigger value="original" class={get_class_tabTrigger()}>Original</Tabs.Trigger>
+
+						{#if tilesheets != null}
+							<Tabs.Trigger value="tilesheets" class={get_class_tabTrigger()}>
+								Tilesheets
+							</Tabs.Trigger>
+						{/if}
 
 						{#each splitPalettes as splitPalette, index (splitPalette)}
 							<Tabs.Trigger value="palette-{index}" class={get_class_tabTrigger()}>
@@ -238,6 +250,19 @@
 						loadedImageType="originalImage"
 						bind:pixels={pixels!}
 						palette={palette!}
+						bind:tilesheets
+						bind:splitPalettes
+						bind:reducedPalette
+						bind:colourMappings
+					/>
+				</Tabs.Content>
+
+				<Tabs.Content value="tilesheets">
+					<LoadedImage
+						loadedImageType="tilesheets"
+						bind:pixels={pixels!}
+						palette={palette!}
+						{tilesheets}
 						bind:splitPalettes
 						bind:reducedPalette
 						bind:colourMappings

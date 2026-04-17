@@ -1,2 +1,1 @@
-
-export type LoadedImageType = 'originalImage' | 'paletteSplit' | 'reduced';
+export type LoadedImageType = 'originalImage' | 'tilesheets' | 'paletteSplit' | 'reduced';

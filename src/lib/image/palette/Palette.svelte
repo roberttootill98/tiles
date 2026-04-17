@@ -5,6 +5,7 @@
 	import {
 		CircleArrowDown,
 		Download,
+		Layers,
 		ListOrdered,
 		PaintBucket,
 		Settings,
@@ -21,7 +22,7 @@
 		type ColourMapping,
 		type CombinationResult
 	} from '$lib/colour';
-	import { paletteSize } from '$lib/image/palette/palette';
+	import { paletteSize, type Palette } from '$lib/image/palette/palette';
 	import type { LoadedImageType } from '../loadedImage/loadedImage';
 	import { class_toolButton, downloadBlob } from '$lib/utils';
 	import EmptyPaletteSlot from '../EmptyPaletteSlot.svelte';
@@ -30,12 +31,16 @@
 	import { kMeans } from '$lib/kMeans';
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { distanceCombination_threshold } from '$lib/distanceCombination';
+	import { get_tile_palette, type Tile } from '../canvas/tiles/tiles';
+	import Tilesheet from '$lib/tile/tilesheet/Tilesheet';
 
 	let {
 		loadedImageType,
 		palette = $bindable(),
 		width,
 		selectedColour = $bindable(),
+		tiles,
+		tilesheets = $bindable(),
 		splitPalettes = $bindable(),
 		reducedPalette = $bindable(),
 		colourMappings = $bindable()
@@ -44,8 +49,10 @@
 		palette: Colour[];
 		width: number;
 		selectedColour?: Colour;
-		splitPalettes?: Colour[][];
-		reducedPalette?: Colour[];
+		tiles?: Tile[];
+		tilesheets?: Tilesheet[];
+		splitPalettes?: Palette[];
+		reducedPalette?: Palette;
 		colourMappings?: ColourMapping[];
 	} = $props();
 
@@ -295,6 +302,61 @@
 		}
 
 		if (['originalImage', 'reduced'].includes(loadedImageType)) {
+			items.push({
+				type: 'button',
+				icon: Layers,
+				tooltip: 'Build tilesheets',
+				onclick: (): void => {
+					// reset tile sheets
+					tilesheets = [];
+
+					// get background colour
+					const colour_background: Colour = palette[0];
+					console.log('colour_background:', colour_background);
+
+					const tiles_toSplit: Tile[] = [];
+
+					for (const tile of tiles!) {
+						const tile_palette: Colour[] = get_tile_palette(tile, colour_background);
+
+						if (tile_palette.length > paletteSize) {
+							// there are two many colours in this tile to fit in one palette
+							tiles_toSplit.push(tile);
+
+							continue;
+						}
+
+						//#region check if tile can fit in any existing tilesheet
+						let processed: boolean = false;
+
+						for (const tilesheet of tilesheets) {
+							const success: boolean = tilesheet.add_tile(tile, colour_background);
+
+							if (success) {
+								processed = true;
+								break;
+							}
+						}
+
+						//#endregion check if tile can fit in any existing palettes
+
+						if (!processed) {
+							// failed to add tile to existing palette so create new palette
+							const tilesheet: Tilesheet = new Tilesheet(tile_palette, tile);
+
+							tilesheets.push(tilesheet);
+						}
+					}
+
+					console.log(`got ${tiles_toSplit.length} tile with too many colours to split out!`);
+
+					// TODO process tiles with too many colours
+
+					console.log(`built ${tilesheets.length} tilesheets!`);
+				},
+				disabled: splitPalettes != undefined
+			});
+
 			// split palette into groups of 16
 			items.push({
 				type: 'button',

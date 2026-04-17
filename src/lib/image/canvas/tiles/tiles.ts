@@ -1,4 +1,5 @@
 import { compareColours, type Colour } from '$lib/colour';
+import type { Palette } from '$lib/image/palette/palette';
 
 export type Tile = {
 	// tile as 2d array of colours
@@ -13,6 +14,27 @@ export type HighlightedTile = {
 	x_mirror: boolean;
 	y_mirror: boolean;
 };
+
+export function get_tile_palette(tile: Tile, backgroundColour: Colour): Palette {
+	const palette_tile: Colour[] = [backgroundColour];
+
+	for (const row of tile.tile) {
+		for (const colour of row) {
+			const found: boolean =
+				palette_tile.find((palette_tile_search: Colour) => {
+					return compareColours(colour, palette_tile_search);
+				}) != null;
+
+			if (!found) {
+				palette_tile.push(colour);
+			}
+		}
+	}
+
+	return palette_tile;
+}
+
+//#region compare tiles
 
 export type CompareTileResult = {
 	same: boolean;
@@ -92,3 +114,5 @@ function flipInY(tile: Colour[][]): Colour[][] {
 
 	return tile_new;
 }
+
+//#endregion compare tiles
